@@ -517,6 +517,11 @@ html.vt-theme::view-transition-old(root){z-index:1} html.vt-theme::view-transiti
 path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.1s cubic-bezier(.65,0,.35,1) .15s forwards}
 @keyframes drawLine{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){path.draw{animation:none;stroke-dashoffset:0}}
+.gasset{margin-top:12px;background:var(--soft,var(--bg));border-radius:14px;padding:10px 12px}
+.gasset summary{cursor:pointer;font-weight:700;font-size:14px}
+.gasol{padding-left:20px;margin:10px 0;font-size:14px;line-height:1.6;color:var(--ink)}
+.gasol li{margin-bottom:8px}
+.gasset .addline input{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -616,6 +621,7 @@ path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.1s cubic-b
       <p class="hint" id="bkDriveInfo" style="margin:0 0 8px"></p>
       <div class="btnrow"><button class="btn small pri" id="bkDrive">立即备份到 Drive</button><button class="btn small" id="bkDown">下载备份</button><button class="btn small" id="bkRestoreBtn">从备份恢复</button><input type="file" id="bkFile" accept=".json,.txt,application/json,text/plain" hidden></div>
       <p class="hint" id="bkInfo" style="margin:8px 0 0"></p>
+      <div id="gasBox" class="gasbox"></div><div id="bkDriveList"></div>
       
     </details>
   </section>
@@ -901,7 +907,7 @@ const CACHE="moneybook-cache-v1"; let ready=false, earlyQ={}, cacheT;
 function saveCache(){ clearTimeout(cacheT); cacheT=setTimeout(()=>{ try{ localStorage.setItem(CACHE,JSON.stringify({at:Date.now(),meta,months})); }catch(e){} },400); }
 function loadCache(){ try{ const c=JSON.parse(localStorage.getItem(CACHE)||"null"); if(!c||!c.meta) return false; applyMeta(c.meta); Object.keys(months).forEach(k=>delete months[k]); Object.entries(c.months||{}).forEach(([k,v])=>months[k]=v.map(t=>({...t}))); return true; }catch(e){ return false; } }
 function writeDoc(id,data){
-  saveCache();
+  saveCache(); if(id!=="meta"||!driveBusy) try{ gasMark(); }catch(e){}
   if(!ready){ earlyQ[id]=data; return; }
   if(!db){ try{ const all=JSON.parse(localStorage.getItem(LS)||"{}"); all[id]=data; localStorage.setItem(LS,JSON.stringify(all)); }catch(e){} return; }
   const o=obGet(); o[id]=data; obSet(o); flush();
@@ -926,6 +932,7 @@ async function flush(){
 function renderSync(){
   const n=Object.keys(obGet()).length, el=$("#status");
   if(!db){ const lb=meta.lastBackup, days=lb?Math.floor((Date.parse(today())-Date.parse(lb))/864e5):null, old=!meta.accounts.length?false:days==null||days>=7;
+    if(meta.gas&&meta.accounts.length){ el.innerHTML=`<span>${driveBusy?"☁️ 备份中…":meta.lastDriveBackup===today()?`<span class="pos">●</span> 已自动备份到 Drive`:`<span class="neg">●</span> ${days==null?"还没备份过":days+" 天没备份了"}`}</span><button class="syncbtn" id="bkQuick">☁️ 备份</button>`; return; }
     el.innerHTML=!meta.accounts.length?`<span>📱 新的开始</span><button class="syncbtn" id="bkFirst">📥 导入备份</button>`:`<span>${old?`<span class="neg">●</span> ${days==null?"还没备份过":days+" 天没备份了"}`:`<span class="pos">●</span> 已备份 · ${lb.slice(5).replace("-","/")}`}</span><button class="syncbtn" id="bkQuick">☁️ 备份</button>`; return; }
   const t=lastSync?`${String(lastSync.getHours()).padStart(2,"0")}:${String(lastSync.getMinutes()).padStart(2,"0")}`:"";
   const msg=n?`<span class="neg">● 离线 · ${n} 项还没上传</span>`:syncState==="ok"?`<span class="pos">●</span> 已同步${t?" "+t:""}`:`<span class="neg">● 连不上</span>`;
@@ -969,7 +976,7 @@ function applyMeta(v){
   m.retire=v.retire?{...v.retire}:null; m.incModel=v.incModel?{...v.incModel}:null; m.salCmp=v.salCmp?{...v.salCmp}:null;
   m.incPick={...(v.incPick||{})}; m.alertSeen={...(v.alertSeen||{})}; m.recapSeen={...(v.recapSeen||{})};
   m.monthStart=Number(v.monthStart)||1; m.skin=v.skin||"classic";
-  m.lastBackup=v.lastBackup||null; m.resetAt=v.resetAt||""; m.driveFolderId=v.driveFolderId||""; m.lastDriveBackup=v.lastDriveBackup||null; m.lastDriveUrl=v.lastDriveUrl||"";
+  m.lastBackup=v.lastBackup||null; m.resetAt=v.resetAt||""; m.driveFolderId=v.driveFolderId||""; m.lastDriveBackup=v.lastDriveBackup||null; m.lastDriveUrl=v.lastDriveUrl||""; m.gas=v.gas&&v.gas.url?{...v.gas}:null;
   m.mumEpf={...DEFAULT_MUM,...(v.mumEpf||{}),manual:(v.mumEpf?.manual||[]).map(x=>({...x})),dividends:{...(v.mumEpf?.dividends||{})}};
   meta=m;
 }
@@ -2536,7 +2543,7 @@ function saveFile(filename,data,mime){ const b=new Blob([data],{type:mime||"appl
 async function shareBackup(){ const name="moneybook-backup-"+today()+".json", txt=JSON.stringify(backupData());
   try{ const f=new File([txt],"moneybook-backup-"+today()+".txt",{type:"text/plain"}); if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],title:name}); meta.lastBackup=today(); saveMeta(); renderBk(); renderSync(); toast("已备份"); return; } }catch(e){ if(e&&e.name==="AbortError"){ toast("没有备份"); return; } }
   saveFile(name,txt,"application/json"); meta.lastBackup=today(); saveMeta(); renderBk(); renderSync(); toast("已下载备份文件"); }
-document.addEventListener("click",e=>{ if(e.target.closest("#bkQuick")) shareBackup(); if(e.target.closest("#bkFirst")) $("#bkFile").click(); });
+document.addEventListener("click",e=>{ if(e.target.closest("#bkQuick")) (meta.gas?driveBackup(true):shareBackup()); if(e.target.closest("#bkFirst")) $("#bkFile").click(); });
 function backupData(){return {app:"我的钱簿",version:1,exportedAt:new Date().toISOString(),meta:clone(meta),months:clone(months)}}
 $("#bkDown").onclick=async()=>{
   try{ saveFile("moneybook-backup-"+today()+".json",JSON.stringify(backupData()),"application/json");
@@ -2550,17 +2557,97 @@ $("#bkFile").onchange=async e=>{
     const d=JSON.parse(await f.text());
     if(d.app!=="我的钱簿"||!d.meta||!d.months) throw 0;
     if(!await askConfirm(`用 ${String(d.exportedAt).slice(0,10)} 的备份覆盖现在的全部资料？`)) return;
-    applyMeta(d.meta); Object.keys(months).forEach(k=>{ if(!(k in d.months)){ months[k]=[]; saveMonth(k);} });
+    const keepG=meta.gas, keepK=meta.gasKey; applyMeta(d.meta); if(keepG){ meta.gas=keepG; meta.gasKey=keepK; } Object.keys(months).forEach(k=>{ if(!(k in d.months)){ months[k]=[]; saveMonth(k);} });
     Object.entries(d.months).forEach(([k,v])=>{months[k]=v.map(t=>({...t}));saveMonth(k)});
-    saveMeta(); render(); renderSync(); toast("已恢复");
+    saveMeta(); render(); renderBk(); renderSync(); toast("已恢复");
   }catch(err){ toast("这个文件不是钱簿备份"); }
 };
-let driveBusy=false;
-function autoDrive(){}
-$("#bkDrive").onclick=()=>shareBackup();
+let driveBusy=false, gasT=null, gasDirty=false;
+const GAS_SCRIPT=key=>`// 我的钱簿 · 自动备份到 Google Drive
+const KEY = "${key}";
+const FOLDER = "我的钱簿备份";
+const KEEP = 14; // 只留最近几天
+
+function doPost(e) {
+  const b = JSON.parse(e.postData.contents);
+  if (b.key !== KEY) return out_({ ok: false, error: "key" });
+  const f = folder_();
+  if (b.action === "ping") return out_({ ok: true });
+  if (b.action === "backup") {
+    const name = "moneybook-backup-" + b.date + ".json";
+    const old = f.getFilesByName(name); while (old.hasNext()) old.next().setTrashed(true);
+    const file = f.createFile(name, b.data, "application/json");
+    const all = []; const it = f.getFiles();
+    while (it.hasNext()) { const x = it.next(); if (/^moneybook-backup-/.test(x.getName())) all.push(x); }
+    all.sort((a, c) => c.getName().localeCompare(a.getName()));
+    all.slice(KEEP).forEach(x => x.setTrashed(true));
+    return out_({ ok: true, url: file.getUrl() });
+  }
+  if (b.action === "list") {
+    const list = []; const it = f.getFiles();
+    while (it.hasNext()) { const x = it.next(); if (/^moneybook-backup-/.test(x.getName())) list.push({ id: x.getId(), name: x.getName() }); }
+    list.sort((a, c) => c.name.localeCompare(a.name));
+    return out_({ ok: true, files: list });
+  }
+  if (b.action === "get") {
+    const file = DriveApp.getFileById(b.id);
+    if (!file.getParents().hasNext() || file.getParents().next().getId() !== f.getId()) return out_({ ok: false, error: "folder" });
+    return out_({ ok: true, data: file.getBlob().getDataAsString() });
+  }
+  return out_({ ok: false, error: "action" });
+}
+function folder_() { const it = DriveApp.getFoldersByName(FOLDER); return it.hasNext() ? it.next() : DriveApp.createFolder(FOLDER); }
+function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+`;
+function gasKey(){ if(meta.gasKey) return meta.gasKey; const a=new Uint8Array(18); crypto.getRandomValues(a); meta.gasKey=[...a].map(x=>"abcdefghijkmnpqrstuvwxyz23456789"[x%32]).join(""); saveMeta(); return meta.gasKey; }
+async function gasCall(body,url){ const g=url?{url,key:meta.gasKey}:meta.gas; if(!g) throw {code:"no_gas"};
+  const r=await fetch(g.url,{method:"POST",body:JSON.stringify({...body,key:g.key||meta.gasKey}),headers:{"Content-Type":"text/plain;charset=utf-8"},redirect:"follow"});
+  const t=await r.text(); let j; try{ j=JSON.parse(t); }catch(e){ throw {code:"bad_reply"}; } if(!j.ok) throw {code:j.error||"fail"}; return j; }
+async function driveBackup(manual){
+  if(driveBusy||!meta.gas) return; driveBusy=true; renderSync();
+  try{ const j=await gasCall({action:"backup",date:today(),data:JSON.stringify(backupData())}); gasDirty=false;
+    meta.lastDriveBackup=today(); meta.lastBackup=today(); meta.lastDriveUrl=j.url||""; meta.lastDriveAt=new Date().toISOString(); driveBusy=false; saveMeta(); gasDirty=false; clearTimeout(gasT); renderBk(); renderSync(); if(manual) toast("已备份到 Google Drive"); }
+  catch(e){ driveBusy=false; renderSync(); if(manual) toast(e?.code==="key"?"钥匙不对，脚本要重新贴":"备份没成功，等下有网络再试"); }
+}
+function autoDrive(){ if(meta.gas&&meta.accounts.length&&meta.lastDriveBackup!==today()) setTimeout(()=>driveBackup(false),1500); }
+function gasMark(){ if(!meta.gas||driveBusy) return; gasDirty=true; clearTimeout(gasT); const last=Date.parse(meta.lastDriveAt||0)||0, wait=Math.max(20000,last+3*3600e3-Date.now()); gasT=setTimeout(()=>{ if(gasDirty) driveBackup(false); },wait); }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&meta.gas&&meta.lastDriveBackup!==today()) driveBackup(false); });
+$("#bkDrive").onclick=()=>meta.gas?driveBackup(true):shareBackup();
 function renderBk(){
-  $("#bkDriveInfo").innerHTML="资料只存在这台手机。按「备份到 Drive」会打开分享，选 <b>Google Drive</b> 就存进去了。换手机或重装时，用「从备份恢复」选那个文件（可以直接从 Drive 选）。<br>⚠️ 收据照片只存在手机里，不在备份文件里。";
-  $("#bkInfo").textContent=meta.lastBackup?"上次备份："+meta.lastBackup:"还没有备份过。"; }
+  const g=meta.gas;
+  $("#bkDriveInfo").innerHTML=g?`☁️ <b>自动备份已开启</b>：每天第一次打开会备份一次，记了新东西也会再备份（最多每 3 小时一次）。存在 Google Drive 的「我的钱簿备份」文件夹，只留最近 14 天。${meta.lastDriveUrl?` <a href="${esc(meta.lastDriveUrl)}" target="_blank" rel="noopener">打开最新备份</a>`:""}<br>⚠️ 收据照片只存在手机里，不在备份里。`
+    :"资料只存在这台手机。按「备份到 Drive」会打开分享，选 <b>Google Drive</b>。想要<b>自动备份</b>，照下面设定一次就好。<br>⚠️ 收据照片只存在手机里，不在备份文件里。";
+  $("#bkDrive").textContent=g?"立即备份到 Drive":"备份到 Drive（分享）";
+  $("#bkInfo").textContent=meta.lastBackup?"上次备份："+meta.lastBackup+(meta.lastDriveAt&&g?" "+new Date(meta.lastDriveAt).toTimeString().slice(0,5):""):"还没有备份过。";
+  const box=$("#gasBox"); if(typingIn&&typingIn(box)) return;
+  box.innerHTML=g?`<div class="btnrow" style="margin-top:10px"><button class="btn small" id="gasRestore">从 Drive 恢复</button><button class="btn small" id="gasOff">关掉自动备份</button></div>`
+  :`<details class="gasset"><summary>⚙️ 设定自动备份到 Google Drive（一次就好，大约 5 分钟）</summary>
+    <ol class="gasol">
+      <li>按 <button type="button" class="btn small" id="gasCopy">📋 复制脚本</button></li>
+      <li>用浏览器打开 <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">script.google.com</a>（用你的 Google 账号），会开一个新项目。把里面原本的字全部删掉，贴上刚才复制的脚本，按 💾 保存。</li>
+      <li>右上角 <b>部署 → 新建部署</b>。齿轮选 <b>网页应用</b>。「执行身份」选 <b>我</b>，「谁可以访问」选 <b>任何人</b>。按部署。</li>
+      <li>它会要你授权：选你的账号 → 出现「Google 没有验证这个应用」→ 按 <b>高级 → 前往（不安全）</b> → 允许。这是你自己写的脚本，只有你在用，放心。</li>
+      <li>复制它给你的 <b>网页应用网址</b>（https://script.google.com/macros/s/…/exec），贴在下面：</li>
+    </ol>
+    <div class="addline"><input id="gasUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"><button class="btn small pri" id="gasTest">连接</button></div>
+    <p class="hint" id="gasMsg" style="margin:6px 0 0"></p></details>`;
+}
+document.addEventListener("click",async e=>{
+  if(e.target.closest("#gasCopy")){ const t=GAS_SCRIPT(gasKey()); try{ await navigator.clipboard.writeText(t); toast("已复制脚本"); }catch(err){ prompt("复制下面全部：",t); } return; }
+  if(e.target.closest("#gasTest")){ const u=$("#gasUrl").value.trim(), msg=$("#gasMsg"); if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(u)){ msg.textContent="网址要是 https://script.google.com/macros/s/…/exec"; return; }
+    msg.textContent="连接中…"; try{ gasKey(); await gasCall({action:"ping"},u); meta.gas={url:u,key:meta.gasKey}; saveMeta(); renderBk(); renderSync(); toast("连接成功，先备份一次"); driveBackup(true); }
+    catch(err){ msg.textContent=err?.code==="key"?"连上了，但钥匙不对：脚本要用这里「复制脚本」的版本":"连不上。检查：部署时「谁可以访问」要选「任何人」，网址要复制完整。"; } return; }
+  if(e.target.closest("#gasOff")){ if(!await askConfirm("关掉自动备份？Drive 里的旧备份不会删。")) return; meta.gas=null; saveMeta(); renderBk(); renderSync(); toast("已关掉"); return; }
+  if(e.target.closest("#gasRestore")){ const box=$("#bkDriveList"); box.innerHTML='<p class="hint" style="margin:8px 0 0">读取中…</p>';
+    try{ const j=await gasCall({action:"list"}); if(!j.files.length){ box.innerHTML='<p class="hint">Drive 里还没有备份。</p>'; return; }
+      box.innerHTML='<p class="hint" style="margin:10px 0 6px">选一天的备份来恢复：</p><div class="btnrow">'+j.files.map(f=>`<button class="btn small" data-gasf="${esc(f.id)}">${esc(f.name.replace("moneybook-backup-","").replace(".json",""))}</button>`).join("")+'</div>'; }
+    catch(err){ box.innerHTML=""; toast("读取 Drive 失败"); } return; }
+  const gf=e.target.closest("[data-gasf]"); if(gf){ try{ const j=await gasCall({action:"get",id:gf.dataset.gasf}); const d=JSON.parse(j.data); if(d.app!=="我的钱簿"||!d.meta||!d.months) throw 0;
+      if(!await askConfirm(`用 ${gf.textContent} 的 Drive 备份覆盖现在的全部资料？`)) return;
+      const keepG=meta.gas, keepK=meta.gasKey; applyMeta(d.meta); meta.gas=keepG; meta.gasKey=keepK; Object.keys(months).forEach(k=>{ if(!(k in d.months)){ months[k]=[]; saveMonth(k);} });
+      Object.entries(d.months).forEach(([k,v])=>{months[k]=v.map(t=>({...t}));saveMonth(k)}); saveMeta(); render(); renderBk(); renderSync(); $("#bkDriveList").innerHTML=""; toast("已恢复"); }
+    catch(err){ toast("恢复失败"); } }
+});
 
 
 $("#msSave").onclick=()=>{const v=parseInt($("#msDay").value,10);if(!(v>=1&&v<=31)){toast("要在 1 到 31 之间");return}meta.monthStart=v;viewMonth=curPeriod();saveMeta();render();toast("已保存");};
