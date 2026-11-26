@@ -586,6 +586,8 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
 .yc:not([open]) .ydet{display:none}
 #salCmp .setgrid{grid-template-columns:1fr 1fr 1fr}
 #salCmp .setgrid label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sberr small{display:block;margin-top:6px;color:var(--ink2);font-size:12px;word-break:break-word}
+.sberr code{display:block;margin-top:6px;padding:8px;border-radius:8px;background:var(--paper);font-size:12px;word-break:break-all;user-select:all}
 .sberr{margin-top:10px;background:color-mix(in srgb,var(--seal) 12%,transparent);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.5}
 /* info bubbles */
 .ibtn{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:0;margin-left:6px;vertical-align:2px;padding:0;background:color-mix(in srgb,var(--brand,#7C6CF2) 16%,transparent);color:var(--brand,#7C6CF2);font:italic 800 12px/1 Georgia,serif;cursor:pointer;transition:transform .2s}
@@ -991,8 +993,10 @@ function shiftMonth(m,d){const [y,mm]=m.split("-").map(Number);return ym(new Dat
 // ---------- Supabase sync ----------
 const SBT="moneybook_docs"; let SB=null, sbEmail="", firstLink=false, sbErr="";
 function sbWhy(e){ e=String(e||""); return /does not exist|Could not find the table|schema cache|PGRST205|42P01/i.test(e)?"Supabase 里还没有钱簿的表：去事后诸葛亮那个项目的 SQL Editor 跑一次 moneybook_setup.sql，再回来按「立即同步」。"
-  :/JWT|expired|401|not authorized|permission denied|row-level security|42501/i.test(e)?"登入过期或没有权限：按「登出」再登入一次。"
-  :/Failed to fetch|NetworkError|network/i.test(e)?"连不到 Supabase：检查网络。":"原因："+e; } const lastPut={};
+  :/permission denied for table|42501/i.test(e)?"表开了，但没有开放给登入的用户：去 SQL Editor 跑下面这一行：<code>grant select, insert, update, delete on public.moneybook_docs to authenticated;</code>"
+  :/row-level security/i.test(e)?"被 Supabase 的安全规则挡住了：在 SQL Editor 再跑一次 moneybook_setup.sql。"
+  :/JWT|expired|401|not authorized/i.test(e)?"登入过期：按「登出」再登入一次。"
+  :/Failed to fetch|NetworkError|network/i.test(e)?"连不到 Supabase：检查网络。":"原因："; } const lastPut={};
 const lsGet=(k,d)=>{ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} };
 function sbCfg(){ const l=lsGet("shzgl.cfg",null)||{}; return {url:String(l.url||"").trim().replace(/\/+$/,""),key:String(l.key||"").trim()}; }
@@ -2776,15 +2780,15 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
 $("#bkDrive").onclick=()=>meta.gas?driveBackup(true):shareBackup();
 function renderSyncBox(){ const box=$("#syncBox"); if(!box||typingIn(box)) return; const c=sbCfg(), n=Object.keys(obGet()).length;
   if(db&&SB&&sbEmail){ box.innerHTML=`<div class="kv"><span>账号</span><b>${esc(sbEmail)}</b></div><div class="kv"><span>状态</span><b>${n?`<span class="neg">${n} 项还没上传</span>`:syncState==="ok"?'<span class="pos">已同步</span>':'<span class="neg">连不上</span>'}</b></div>
-      ${sbErr?`<div class="sberr">⚠️ ${esc(sbWhy(sbErr))}</div>`:""}
+      ${sbErr?`<div class="sberr">⚠️ ${sbWhy(sbErr).replace(/^原因：.*/,"")||""}<small>Supabase 说：${esc(sbErr)}</small></div>`:""}
       <p class="hint">用的是事后诸葛亮那个 Supabase 项目。手机、iPad 登入同一个账号，记一笔另一台马上看到。</p>
       <div class="btnrow" style="margin-top:10px"><button class="btn small pri" id="syncBtn">🔄 立即同步</button><button class="btn small" id="sbOut">登出</button></div>`; return; }
   if(db&&(!SB||!sbEmail)){ box.innerHTML=`<p>${window.supabase?"登入过期了，重新登入一次：":"现在没有网络，改动先存在这台设备，有网络会自动上传。"}</p>${window.supabase?'<div class="btnrow"><button class="btn small pri" id="sbRe">重新登入</button></div>':""}`; return; }
   box.innerHTML=`<p class="hint" style="margin:0 0 10px">登入后，手机和 iPad 的钱簿会自动同步。用事后诸葛亮的同一个账号就好。</p>
-    ${c.url?"":`<label for="sbUrl">Supabase 网址（事后诸葛亮那个）</label><input id="sbUrl" placeholder="https://xxxx.supabase.co" autocomplete="off"><label for="sbKey" style="margin-top:8px">Publishable key</label><input id="sbKey" placeholder="sb_publishable_…" autocomplete="off">`}
-    <label for="sbMail" style="margin-top:8px">电邮</label><input id="sbMail" type="email" autocomplete="username">
-    <label for="sbPass" style="margin-top:8px">密码</label><input id="sbPass" type="password" autocomplete="current-password">
-    <div class="btnrow" style="margin-top:12px"><button class="btn pri" id="sbIn">登入</button></div><p class="hint" id="sbMsg" style="margin:8px 0 0"></p>`; }
+    ${c.url?"":`<div class="field"><label for="sbUrl">Supabase 网址（事后诸葛亮那个）</label><input id="sbUrl" placeholder="https://xxxx.supabase.co" autocomplete="off"></div><div class="field"><label for="sbKey">Publishable key</label><input id="sbKey" placeholder="sb_publishable_…" autocomplete="off"></div>`}
+    <div class="field"><label for="sbMail">电邮</label><input id="sbMail" type="email" inputmode="email" autocomplete="username"></div>
+    <div class="field"><label for="sbPass">密码</label><input id="sbPass" type="password" autocomplete="current-password"></div>
+    <button class="btn pri" id="sbIn" style="width:100%;margin-top:4px">登入</button><p class="hint" id="sbMsg" style="margin:8px 0 0"></p>`; }
 document.addEventListener("click",async e=>{
   if(e.target.closest("#syncWhy")){ showTab("acc"); openPg("pg-set"); openPg("pg-s-sync"); renderSyncBox(); return; }
   if(e.target.closest("#sbRe")){ try{ localStorage.removeItem("mb:uid"); }catch(er){} location.reload(); return; }
