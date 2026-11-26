@@ -564,6 +564,9 @@ body.pg-on{overflow:hidden} body.pg-on .fab{opacity:0;pointer-events:none;transf
 #accList>.row{flex-direction:column;align-items:flex-start;gap:6px;border:0!important;border-radius:20px;background:var(--paper);padding:14px;box-shadow:0 4px 14px -8px rgba(0,0,0,.18);animation:tileIn .45s cubic-bezier(.34,1.56,.64,1) both;transition:transform .15s}
 #accList>.row:active{transform:scale(.95)} #accList>.row .main{width:100%} #accList>.row .amt{font-size:17px}
 #accList .empty{grid-column:1/-1}
+#accList>.row{position:relative}
+.accpen{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:12px;display:grid;place-items:center;font-size:15px;background:color-mix(in srgb,var(--brand,#7C6CF2) 12%,transparent);transition:transform .15s}
+.accpen:active{transform:scale(.85) rotate(-15deg)}
 /* info bubbles */
 .ibtn{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:0;margin-left:6px;vertical-align:2px;padding:0;background:color-mix(in srgb,var(--brand,#7C6CF2) 16%,transparent);color:var(--brand,#7C6CF2);font:italic 800 12px/1 Georgia,serif;cursor:pointer;transition:transform .2s}
 .ibtn.on{background:var(--brand,#7C6CF2);color:#fff;transform:rotate(360deg)}
@@ -1510,7 +1513,7 @@ function renderTx(){
   } else if(hist){
     list=allTx().filter(pass).sort((a,b)=>(b.date+b.created).localeCompare(a.date+a.created));
     const acc=accById(histId), bal=balances()[histId]||0;
-    $("#qInfo").innerHTML=`<div class="monthbar" style="margin:0 0 6px"><h2 style="margin:0">${esc(acc?acc.name:"")}</h2><button class="btn small" data-hist-back>‹ 回户口</button></div><div class="kv"><span>现在余额</span><b class="num ${bal<0?"neg":""}">RM ${money(bal)}</b></div><div class="kv"><span>全部记录</span><b>${list.length} 笔</b></div>${list.length>500?'<p class="hint" style="margin:4px 0 0">只显示最新 500 笔。</p>':""}`;
+    $("#qInfo").innerHTML=`<div class="monthbar" style="margin:0 0 6px"><h2 style="margin:0">${esc(acc?acc.name:"")}</h2><span style="display:flex;gap:6px"><button class="btn small pri" data-accedit="${histId}">✏️ 改余额</button><button class="btn small" data-hist-back>‹ 回户口</button></span></div><div class="kv"><span>现在余额</span><b class="num ${bal<0?"neg":""}">RM ${money(bal)}</b></div><div class="kv"><span>全部记录</span><b>${list.length} 笔</b></div>${list.length>500?'<p class="hint" style="margin:4px 0 0">只显示最新 500 笔。</p>':""}`;
     list=list.slice(0,500);
   } else list=periodTx(viewMonth).filter(pass).sort((a,b)=>(b.date+b.created).localeCompare(a.date+a.created));
   const hAcc=hist?accById(histId):null;
@@ -1539,7 +1542,7 @@ function renderAcc(){
   let html="";
   const pendAll=pendingInst();
   const row=a=>{ if(reorder==="acc") return `<div class="row">${accDot(a)}<span class="main"><span class="t" style="display:block">${esc(a.name)}</span></span><span class="mv"><button data-mv="acc" data-id="${a.id}" data-d="-1" aria-label="上移">▲</button><button data-mv="acc" data-id="${a.id}" data-d="1" aria-label="下移">▼</button></span></div>`;
-    return `<button class="row" data-acc="${a.id}">${accDot(a)}<span class="main"><span class="t" style="display:block">${esc(a.name)}</span>${(()=>{const x=[pendAll.per[a.id]?"未到期分期 "+money(pendAll.per[a.id]):"",a.excludeNet?"不计入净资产":""].filter(Boolean).join(" · ");return x?`<span class="s" style="display:block">${x}</span>`:""})()}</span><span class="amt num ${b[a.id]<0?"neg":""}">${money(b[a.id])}</span></button>`};
+    return `<button class="row" data-acc="${a.id}"><span class="accpen" role="button" data-accedit="${a.id}" aria-label="改余额">✏️</span>${accDot(a)}<span class="main"><span class="t" style="display:block">${esc(a.name)}</span>${(()=>{const x=[pendAll.per[a.id]?"未到期分期 "+money(pendAll.per[a.id]):"",a.excludeNet?"不计入净资产":""].filter(Boolean).join(" · ");return x?`<span class="s" style="display:block">${x}</span>`:""})()}</span><span class="amt num ${b[a.id]<0?"neg":""}">${money(b[a.id])}</span></button>`};
   LGROUPS.forEach(([k,label,types])=>{
     const accs=meta.accounts.filter(a=>!a.hidden&&types.includes(a.type)); if(!accs.length) return;
     const tot=accs.reduce((s,a)=>s+b[a.id],0);
@@ -1984,6 +1987,7 @@ function foldHints(root){ (root||document).querySelectorAll(".hint:not([data-hf]
   h.classList.add("ibub"); if(ok&&host.tagName!=="DIV"){ host.appendChild(b); } else { const w=document.createElement("div"); w.className="ihost"; w.appendChild(b); h.before(w); } }); }
 document.addEventListener("click",e=>{ const b=e.target.closest(".ibtn"); if(!b) return; e.preventDefault(); e.stopPropagation(); const host=b.closest(".ihost")||b.parentElement; let h=host.nextElementSibling; while(h&&!h.classList.contains("ibub")) h=h.nextElementSibling; if(h){ h.classList.toggle("show"); b.classList.toggle("on",h.classList.contains("show")); } },true);
 let tileQ=0; new MutationObserver(ms=>{ if(ms.every(m=>m.target.closest&&m.target.closest(".tile"))) return; cancelAnimationFrame(tileQ); tileQ=requestAnimationFrame(()=>{ foldHints(); fillTiles(); }); }).observe(document.body,{childList:true,subtree:true});
+document.addEventListener("click",e=>{ const ed=e.target.closest("[data-accedit]"); if(!ed) return; e.preventDefault(); e.stopPropagation(); const a=accById(ed.dataset.accedit); if(a) openAcc(a); },true);
 function showTab(t){
   tabEnter=Date.now(); closeAllPg();
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
