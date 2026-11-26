@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>我的钱簿</title>
 <link rel="manifest" href="manifest.webmanifest">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js"></script>
 <meta name="theme-color" content="#7C6CF2">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -710,7 +711,7 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
     <div class="list" id="loanList"></div>
     <div class="btnrow" style="margin-top:10px"><button class="btn small pri" data-loan="out">🤝 借出 / 代付</button><button class="btn small" data-loan="back">收回</button><button class="btn small" data-loan="in">借入</button><button class="btn small" data-loan="repay">还钱</button></div>
 </div></div>
-<div class="pg" id="pg-set" role="dialog" aria-label="设定"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>设定</h2></header><div class="pgbody"><div class="tiles"><button type="button" class="tile" data-pg="pg-s-bk"><i class="ti">☁️</i><b>备份</b><small class="ts" id="ts-bk"></small></button><button type="button" class="tile" data-pg="pg-s-cat"><i class="ti">🏷️</i><b>分类</b><small class="ts" id="ts-catn"></small></button><button type="button" class="tile" data-pg="pg-s-epf"><i class="ti">🏛️</i><b>EPF</b><small class="ts" id="ts-sepf"></small></button><button type="button" class="tile" data-pg="pg-s-ms"><i class="ti">📆</i><b>每月从几号开始</b><small class="ts" id="ts-ms"></small></button></div></div></div>
+<div class="pg" id="pg-set" role="dialog" aria-label="设定"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>设定</h2></header><div class="pgbody"><div class="tiles"><button type="button" class="tile" data-pg="pg-s-sync"><i class="ti">🔄</i><b>同步</b><small class="ts" id="ts-sync"></small></button><button type="button" class="tile" data-pg="pg-s-bk"><i class="ti">☁️</i><b>备份</b><small class="ts" id="ts-bk"></small></button><button type="button" class="tile" data-pg="pg-s-cat"><i class="ti">🏷️</i><b>分类</b><small class="ts" id="ts-catn"></small></button><button type="button" class="tile" data-pg="pg-s-epf"><i class="ti">🏛️</i><b>EPF</b><small class="ts" id="ts-sepf"></small></button><button type="button" class="tile" data-pg="pg-s-ms"><i class="ti">📆</i><b>每月从几号开始</b><small class="ts" id="ts-ms"></small></button></div></div></div>
 <div class="pg" id="pg-s-ms" role="dialog" aria-label="每月从几号开始"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>每月从几号开始</h2></header><div class="pgbody">
       <div class="kv" style="align-items:center"><span>填 28 = 10/28 – 11/27 算 11 月</span><div class="divin"><input id="msDay" class="num" inputmode="numeric" style="width:60px" aria-label="每月开始日"><button class="btn small" id="msSave">保存</button></div></div>
       </div></div>
@@ -735,6 +736,7 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
 <div class="pg" id="pg-plan" role="dialog" aria-label="人生计划"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>人生计划</h2></header><div class="pgbody"><div class="planbtns"><button type="button" class="btn small pri" id="planBig">＋ 大开销</button><button type="button" class="btn small" id="planMove">＋ 搬钱</button></div><div class="card" id="rtTimeline"></div><h3 class="sh" id="hBig">🎯 一次性大开销</h3><div class="card" id="rtBig"></div><h3 class="sh" id="hMove">↪️ 搬钱计划</h3><div class="card" id="rtMoves"></div></div></div>
 <div class="pg" id="pg-life" role="dialog" aria-label="退休后的生活费"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>退休后的生活费</h2></header><div class="pgbody"><div id="rtPhases"></div></div></div>
 <div class="pg" id="pg-ass" role="dialog" aria-label="假设"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>假设</h2></header><div class="pgbody"><div class="card mirror" id="rtMirror"></div><div class="card" id="rtWhat"></div><details class="card fold2"><summary>📝 全部设定</summary><div id="rtSet" style="margin-top:8px"></div></details><h3 class="sh">🧑 我的 EPF</h3><div class="card" id="myEpfCard"></div><h3 class="sh">👩 妈妈的 EPF</h3><div class="card" id="mumSum"></div></div></div>
+<div class="pg" id="pg-s-sync" role="dialog" aria-label="同步"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>同步</h2></header><div class="pgbody"><div class="card" id="syncBox"></div></div></div>
 </div>
 <button class="fab" id="fab">＋ 记一笔</button>
 <nav class="tabs" role="tablist"><div class="in">
@@ -985,6 +987,28 @@ function periodTx(m){return [...(months[shiftMonth(m,-1)]||[]),...(months[m]||[]
 function rangeLabel(m){if(SD()===1)return "";const a=periodStart(m),b=periodEnd(m);return `${Number(a.slice(5,7))}/${Number(a.slice(8))} – ${Number(b.slice(5,7))}/${Number(b.slice(8))}`}
 function shiftMonth(m,d){const [y,mm]=m.split("-").map(Number);return ym(new Date(y,mm-1+d,1))}
 
+// ---------- Supabase sync ----------
+const SBT="moneybook_docs"; let SB=null, sbEmail="", firstLink=false; const lastPut={};
+const lsGet=(k,d)=>{ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } };
+const lsSet=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} };
+function sbCfg(){ const l=lsGet("shzgl.cfg",null)||{}; return {url:String(l.url||"").trim().replace(/\/+$/,""),key:String(l.key||"").trim()}; }
+function sbClient(){ const c=sbCfg(); if(!SB&&c.url&&c.key&&window.supabase){ try{ SB=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:"shzgl-auth"}}); }catch(e){ SB=null; } } return SB; }
+const sbShim={ collection(){ return {
+  doc:id=>({ set:async d=>{ lastPut[id]=Date.now(); const {error}=await SB.from(SBT).upsert({user_id:uid,id,data:d}); if(error) throw error; } }),
+  get:async()=>{ const {data,error}=await SB.from(SBT).select("id,data"); if(error) throw error; return {docs:data.map(r=>({id:r.id,exists:true,data:()=>r.data}))}; } }; } };
+async function linkLocal(){ // first time this device logs in: decide which copy wins
+  let n=0; try{ const {count,error}=await SB.from(SBT).select("id",{count:"exact",head:true}); if(error) throw error; n=count||0; }catch(e){ return; }
+  const hasLocal=meta.accounts.length>0;
+  if(!hasLocal) return; // nothing here: just take the cloud copy
+  if(n>0&&await askConfirm("云端已经有钱簿资料了。\n按「确定」= 用云端的（这台设备的会被盖掉）\n按「取消」= 把这台设备的上传，盖掉云端")) return;
+  const o=obGet(); o.meta=clone(meta); Object.keys(months).forEach(k=>o["tx-"+k]={items:months[k]}); obSet(o); await flush(); }
+let sbChan=null, liveT=null;
+function sbLive(){ if(!SB||sbChan) return; try{ sbChan=SB.channel("mb-"+uid).on("postgres_changes",{event:"*",schema:"public",table:SBT,filter:"user_id=eq."+uid},p=>{
+    const r=p.new; if(!r||!r.id) return; if(obGet()[r.id]||Date.now()-(lastPut[r.id]||0)<4000) return;
+    if(r.id==="meta") applyMeta(r.data); else if(r.id.startsWith("tx-")) months[r.id.slice(3)]=((r.data&&r.data.items)||[]).map(t=>({...t}));
+    lastSync=new Date(); saveCache(); clearTimeout(liveT); liveT=setTimeout(()=>{ try{ render(); renderSync(); }catch(e){} },150); }).subscribe(); }catch(e){} }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&db&&SB&&!Object.keys(obGet()).length) pullAll().then(()=>{ lastSync=new Date(); syncState="ok"; saveCache(); render(); renderSync(); }).catch(()=>{}); });
+
 // ---------- storage ----------
 const LS="moneybook-v1";
 // ----- outbox: changes are kept on this device until the server confirms them -----
@@ -1020,12 +1044,13 @@ async function flush(){
 }
 function renderSync(){
   const n=Object.keys(obGet()).length, el=$("#status");
+  if(!db&&sbCfg().url&&meta.accounts.length&&!lsGet("mb:skipSync",false)){ el.innerHTML=`<span>☁️ 还没登入同步</span><button class="syncbtn" id="syncLogin">登入</button>`; return; }
   if(!db){ const lb=meta.lastBackup, days=lb?Math.floor((Date.parse(today())-Date.parse(lb))/864e5):null, old=!meta.accounts.length?false:days==null||days>=7;
     if(meta.gas&&meta.accounts.length){ el.innerHTML=`<span>${driveBusy?"☁️ 备份中…":meta.lastDriveBackup===today()?`<span class="pos">●</span> 已自动备份到 Drive`:`<span class="neg">●</span> ${days==null?"还没备份过":days+" 天没备份了"}`}</span><button class="syncbtn" id="bkQuick">☁️ 备份</button>`; return; }
     el.innerHTML=!meta.accounts.length?`<span>📱 新的开始</span><button class="syncbtn" id="bkFirst">📥 导入备份</button>`:`<span>${old?`<span class="neg">●</span> ${days==null?"还没备份过":days+" 天没备份了"}`:`<span class="pos">●</span> 已备份 · ${lb.slice(5).replace("-","/")}`}</span><button class="syncbtn" id="bkQuick">☁️ 备份</button>`; return; }
   const t=lastSync?`${String(lastSync.getHours()).padStart(2,"0")}:${String(lastSync.getMinutes()).padStart(2,"0")}`:"";
   const msg=n?`<span class="neg">● 离线 · ${n} 项还没上传</span>`:syncState==="ok"?`<span class="pos">●</span> 已同步${t?" "+t:""}`:`<span class="neg">● 连不上</span>`;
-  el.innerHTML=`<span>${msg}</span><button class="syncbtn" id="syncBtn">🔄 更新</button>`;
+  el.innerHTML=`<span>${msg}</span><button class="syncbtn" id="syncBtn">🔄 同步</button>`;
 }
 async function pullAll(){
   const snap=await db.collection(base).get();
@@ -1075,6 +1100,10 @@ async function load(){
   // 2) connect in parallel
   try{
     db=null; try{ navigator.storage?.persist?.(); }catch(e){}
+    try{ const c=sbClient(); if(c){ let sess=null; try{ sess=(await c.auth.getSession()).data.session; }catch(e){}
+      const prev=lsGet("mb:uid","");
+      if(sess){ uid=sess.user.id; sbEmail=sess.user.email||""; db=sbShim; if(prev&&prev!==uid){ obSet({}); } if(!prev) firstLink=true; lsSet("mb:uid",uid); }
+      else if(prev){ uid=prev; db=sbShim; syncState="offline"; } } }catch(e){ db=null; }
   }catch(e){db=null}
   initAssets();
   ready=true;
@@ -1083,7 +1112,8 @@ async function load(){
   earlyQ={};
   if(db){
     base="data/users/"+uid;
-    try{ await pullAll(); syncState="ok"; lastSync=new Date(); saveCache(); }
+    if(firstLink){ firstLink=false; await linkLocal(); }
+    try{ await pullAll(); syncState="ok"; lastSync=new Date(); saveCache(); sbLive(); }
     catch(e){ syncState="offline"; const o=obGet(); Object.entries(o).forEach(([id,v])=>{ if(id==="meta") applyMeta(v); else if(id.startsWith("tx-")) months[id.slice(3)]=(v.items||[]).map(t=>({...t})); }); }
     renderSync(); if(Object.keys(obGet()).length) flush();
   }else{
@@ -2740,7 +2770,28 @@ function autoDrive(){ if(meta.gas&&meta.accounts.length&&meta.lastDriveBackup!==
 function gasMark(){ if(!meta.gas||driveBusy) return; gasDirty=true; clearTimeout(gasT); const last=Date.parse(meta.lastDriveAt||0)||0, wait=Math.max(20000,last+3*3600e3-Date.now()); gasT=setTimeout(()=>{ if(gasDirty) driveBackup(false); },wait); }
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&meta.gas&&meta.lastDriveBackup!==today()) driveBackup(false); });
 $("#bkDrive").onclick=()=>meta.gas?driveBackup(true):shareBackup();
-function renderBk(){
+function renderSyncBox(){ const box=$("#syncBox"); if(!box||typingIn(box)) return; const c=sbCfg(), n=Object.keys(obGet()).length;
+  if(db&&SB&&sbEmail){ box.innerHTML=`<div class="kv"><span>账号</span><b>${esc(sbEmail)}</b></div><div class="kv"><span>状态</span><b>${n?`<span class="neg">${n} 项还没上传</span>`:syncState==="ok"?'<span class="pos">已同步</span>':'<span class="neg">连不上</span>'}</b></div>
+      <p class="hint">用的是事后诸葛亮那个 Supabase 项目。手机、iPad 登入同一个账号，记一笔另一台马上看到。</p>
+      <div class="btnrow" style="margin-top:10px"><button class="btn small pri" id="syncBtn">🔄 立即同步</button><button class="btn small" id="sbOut">登出</button></div>`; return; }
+  if(db&&!SB){ box.innerHTML=`<p>现在没有网络，改动先存在这台设备，有网络会自动上传。</p>`; return; }
+  box.innerHTML=`<p class="hint" style="margin:0 0 10px">登入后，手机和 iPad 的钱簿会自动同步。用事后诸葛亮的同一个账号就好。</p>
+    ${c.url?"":`<label for="sbUrl">Supabase 网址（事后诸葛亮那个）</label><input id="sbUrl" placeholder="https://xxxx.supabase.co" autocomplete="off"><label for="sbKey" style="margin-top:8px">Publishable key</label><input id="sbKey" placeholder="sb_publishable_…" autocomplete="off">`}
+    <label for="sbMail" style="margin-top:8px">电邮</label><input id="sbMail" type="email" autocomplete="username">
+    <label for="sbPass" style="margin-top:8px">密码</label><input id="sbPass" type="password" autocomplete="current-password">
+    <div class="btnrow" style="margin-top:12px"><button class="btn pri" id="sbIn">登入</button></div><p class="hint" id="sbMsg" style="margin:8px 0 0"></p>`; }
+document.addEventListener("click",async e=>{
+  if(e.target.closest("#syncLogin")){ showTab("acc"); openPg("pg-set"); openPg("pg-s-sync"); return; }
+  if(e.target.closest("#sbOut")){ if(Object.keys(obGet()).length&&!await askConfirm("还有改动没上传，登出会丢掉。确定？")) return; if(!await askConfirm("登出这台设备？事后诸葛亮也会一起登出（两个 app 共用同一个登入）。")) return;
+    try{ await SB.auth.signOut(); }catch(err){} ["mb:uid","moneybook-outbox-"+uid].forEach(k=>{ try{ localStorage.removeItem(k); }catch(er){} }); location.reload(); return; }
+  if(e.target.closest("#sbIn")){ const msg=t=>{ $("#sbMsg").textContent=t; };
+    if($("#sbUrl")){ const url=$("#sbUrl").value.trim().replace(/\/+$/,""), key=$("#sbKey").value.replace(/\s+/g,""); if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)||key.length<20){ msg("网址要像 https://xxxx.supabase.co，key 是一长串字"); return; } if(/^sb_secret_/i.test(key)){ msg("这个是 secret key，不能用。要 Publishable key"); return; } lsSet("shzgl.cfg",{url,key}); SB=null; }
+    const c=sbClient(); if(!c){ msg(window.supabase?"设定不对":"没有网络，等下再试"); return; }
+    const email=$("#sbMail").value.trim(), password=$("#sbPass").value; if(!email||!password){ msg("填电邮和密码"); return; }
+    msg("登入中…"); const r=await c.auth.signInWithPassword({email,password}); if(r.error){ msg(/Invalid login/i.test(r.error.message)?"电邮或密码不对":/not confirmed/i.test(r.error.message)?"电邮还没确认":"登入失败："+r.error.message); return; }
+    msg("登入成功，准备同步…"); setTimeout(()=>location.reload(),400); return; }
+});
+function renderBk(){ renderSyncBox(); try{ const t=$("#ts-sync"); if(t) t.textContent=db&&sbEmail?"已登入":"还没登入"; }catch(e){}
   const g=meta.gas;
   $("#bkDriveInfo").innerHTML=g?`☁️ <b>自动备份已开启</b>：每天第一次打开会备份一次，记了新东西也会再备份（最多每 3 小时一次）。存在 Google Drive 的「我的钱簿备份」文件夹，只留最近 14 天。${meta.lastDriveUrl?` <a href="${esc(meta.lastDriveUrl)}" target="_blank" rel="noopener">打开最新备份</a>`:""}<br>⚠️ 收据照片只存在手机里，不在备份里。`
     :"资料只存在这台手机。按「备份到 Drive」会打开分享，选 <b>Google Drive</b>。想要<b>自动备份</b>，照下面设定一次就好。<br>⚠️ 收据照片只存在手机里，不在备份文件里。";
