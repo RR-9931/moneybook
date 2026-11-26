@@ -522,6 +522,56 @@ path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.1s cubic-b
 .gasol{padding-left:20px;margin:10px 0;font-size:14px;line-height:1.6;color:var(--ink)}
 .gasol li{margin-bottom:8px}
 .gasset .addline input{flex:1;min-width:0}
+/* ===== card redesign ===== */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;border:0;border-radius:24px;padding:16px 14px 14px;min-height:112px;
+  background:var(--tc,#EFEAFF);color:var(--ink);cursor:pointer;overflow:hidden;box-shadow:0 6px 16px -8px rgba(124,108,242,.35);
+  animation:tileIn .5s cubic-bezier(.34,1.56,.64,1) both;transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+.tile::after{content:"";position:absolute;right:-22px;bottom:-22px;width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.45)}
+.tile:active{transform:scale(.94)}
+.tile .ti{font-style:normal;font-size:26px;width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.75);margin-bottom:6px;box-shadow:0 3px 8px -4px rgba(0,0,0,.15)}
+.tile.tap .ti{animation:wiggle .45s ease}
+.tile b{font-size:15px;font-weight:800;line-height:1.2;z-index:1}
+.tile .ts{font-size:13px;color:var(--ink2);font-weight:600;z-index:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .tbar{display:flex;height:8px;border-radius:6px;overflow:hidden;width:120px;max-width:100%;margin-top:4px}
+.tile .tbar>*{height:100%!important}
+.tiles .tile:nth-child(6n+1){--tc:#EEE9FF}.tiles .tile:nth-child(6n+2){--tc:#FFE6F0}.tiles .tile:nth-child(6n+3){--tc:#E2F6EE}
+.tiles .tile:nth-child(6n+4){--tc:#FFF2D9}.tiles .tile:nth-child(6n+5){--tc:#E3F0FF}.tiles .tile:nth-child(6n+6){--tc:#F4E6FF}
+.tiles .tile:nth-child(2){animation-delay:.05s}.tiles .tile:nth-child(3){animation-delay:.1s}.tiles .tile:nth-child(4){animation-delay:.15s}.tiles .tile:nth-child(5){animation-delay:.2s}.tiles .tile:nth-child(6){animation-delay:.25s}.tiles .tile:nth-child(n+7){animation-delay:.3s}
+:root[data-theme="dark"] .tile{--tc:#24203A!important;box-shadow:none} :root[data-theme="dark"] .tile .ti{background:rgba(255,255,255,.08)} :root[data-theme="dark"] .tile::after{background:rgba(255,255,255,.04)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile{--tc:#24203A!important;box-shadow:none} :root:not([data-theme="light"]) .tile .ti{background:rgba(255,255,255,.08)} :root:not([data-theme="light"]) .tile::after{background:rgba(255,255,255,.04)}}
+:root[data-theme="dark"] .tiles .tile:nth-child(6n+2){--tc:#33223A!important} :root[data-theme="dark"] .tiles .tile:nth-child(6n+3){--tc:#1E3330!important} :root[data-theme="dark"] .tiles .tile:nth-child(6n+4){--tc:#33301F!important}
+@keyframes tileIn{from{opacity:0;transform:translateY(16px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes wiggle{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-12deg) scale(1.15)}60%{transform:rotate(10deg) scale(1.1)}}
+/* pages */
+#pages .pg{position:fixed;inset:0;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;visibility:hidden;transform:translateX(100%);padding:0 16px calc(110px + env(safe-area-inset-bottom,0px))}
+#pages .pg.open{visibility:visible;transform:none;animation:pgIn .42s cubic-bezier(.22,1.2,.36,1) both}
+#pages .pg.closing{animation:pgOut .26s ease-in both}
+@keyframes pgIn{from{transform:translateX(100%);opacity:.6}to{transform:none;opacity:1}}
+@keyframes pgOut{from{transform:none}to{transform:translateX(100%)}}
+.pgbody{max-width:720px;margin:0 auto}
+.pgbody>*{animation:fadeUp .45s cubic-bezier(.22,1,.36,1) both}.pgbody>*:nth-child(2){animation-delay:.06s}.pgbody>*:nth-child(3){animation-delay:.12s}.pgbody>*:nth-child(n+4){animation-delay:.18s}
+.pghd{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;margin:0 -16px 12px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px)}
+.pghd h2{margin:0;font-size:20px;font-weight:800}
+.pgback{width:40px;height:40px;border-radius:14px;border:0;background:var(--paper);color:var(--ink);font-size:26px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -5px rgba(0,0,0,.25);cursor:pointer;transition:transform .15s}
+.pgback:active{transform:scale(.88)}
+body.pg-on{overflow:hidden} body.pg-on .fab{opacity:0;pointer-events:none;transform:scale(.6)}
+.fab{transition:opacity .2s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.mirror{pointer-events:none;transform:scale(.98);transform-origin:top}
+/* accounts as cards */
+#accList{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:none;border:0;overflow:visible}
+#accList .grouphead{grid-column:1/-1;margin-top:6px}
+#accList>.row{flex-direction:column;align-items:flex-start;gap:6px;border:0!important;border-radius:20px;background:var(--paper);padding:14px;box-shadow:0 4px 14px -8px rgba(0,0,0,.18);animation:tileIn .45s cubic-bezier(.34,1.56,.64,1) both;transition:transform .15s}
+#accList>.row:active{transform:scale(.95)} #accList>.row .main{width:100%} #accList>.row .amt{font-size:17px}
+#accList .empty{grid-column:1/-1}
+/* info bubbles */
+.ibtn{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:0;margin-left:6px;vertical-align:2px;padding:0;background:color-mix(in srgb,var(--brand,#7C6CF2) 16%,transparent);color:var(--brand,#7C6CF2);font:italic 800 12px/1 Georgia,serif;cursor:pointer;transition:transform .2s}
+.ibtn.on{background:var(--brand,#7C6CF2);color:#fff;transform:rotate(360deg)}
+.ihost{display:flex;justify-content:flex-end;margin:4px 0 -6px}
+.hint.ibub{display:none}
+.hint.ibub.show{display:block;background:color-mix(in srgb,var(--brand,#7C6CF2) 10%,var(--paper));color:var(--ink);border-radius:14px;padding:10px 12px!important;margin:8px 0!important;font-size:13px;animation:bub .3s cubic-bezier(.34,1.56,.64,1) both;transform-origin:top right}
+@keyframes bub{from{opacity:0;transform:scale(.85) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tile,#pages .pg.open,#pages .pg.closing,.pgbody>*,#accList>.row,.hint.ibub.show{animation:none!important}}
 </style>
 </head>
 <body>
@@ -539,23 +589,17 @@ path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.1s cubic-b
       <div id="nwTrue" style="font-size:13px;opacity:.85;margin:-2px 0 6px" hidden></div>
       <div class="hand"><span>手上可用</span><b class="num" id="liquid">RM 0.00</b></div>
     </div>
-    <div class="comp">
-      <div class="bar" id="compBar"></div>
-      <div class="legend" id="legend"></div>
-      <p class="hint" style="margin:8px 0 0" id="legNote"></p>
-    </div>
-    <div id="instMini"></div>
-    <div class="card" id="nwCard" style="margin-top:14px"></div>
+
 
     <div class="monthbar">
       <h2>本月</h2>
       <div class="mnav"><button aria-label="上个月" data-mnav="-1">‹</button><span class="mLabel"></span><button aria-label="下个月" data-mnav="1">›</button></div>
     </div>
     <button class="card mcard" id="homeMonth" data-goto-bud></button>
-    <div id="catBars"></div>
+    <div class="tiles">
+      <button type="button" class="tile" data-pg="pg-cat"><i class="ti">🍜</i><b>花在哪里</b><small class="ts" id="ts-cat"></small></button><button type="button" class="tile" data-pg="pg-comp"><i class="ti">🧩</i><b>资产分布</b><small class="ts" id="ts-comp"></small></button><button type="button" class="tile" data-pg="pg-nw"><i class="ti">📈</i><b>净资产走势</b><small class="ts" id="ts-nw"></small></button><button type="button" class="tile" data-pg="pg-recent"><i class="ti">🧾</i><b>最近记录</b><small class="ts" id="ts-recent"></small></button>
+    </div>
 
-    <h2>最近记录</h2>
-    <div class="list" id="recent"></div>
   </section>
 
   <!-- 预算 -->
@@ -566,17 +610,11 @@ path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.1s cubic-b
     </div>
     <div id="budAlert"></div>
     <div class="card" id="monthCard"></div>
-    <div class="card" id="savTrack"></div>
-    <div class="monthbar" style="margin-bottom:8px"><h2>本月收入 <button class="addmini" data-addbud="income" aria-label="新增收入">＋</button></h2><span id="incSum" style="color:var(--ink2)"></span></div>
-    <div class="list" id="incList"></div>
-    <div class="monthbar" style="margin-bottom:8px"><h2>固定开销 <button class="addmini" data-addbud="fixed" aria-label="新增固定开销">＋</button></h2><span class="num" id="fixSum" style="color:var(--ink2)"></span></div>
-    <div class="list" id="fixList"></div>
-    <h2>每月项目 <button class="addmini" data-addbud="pct" aria-label="新增每月项目">＋</button></h2>
-    <div class="list" id="budMonth"></div>
-    <div class="monthbar" style="margin-bottom:8px"><h2><span id="budYearTitle">全年项目</span> <button class="addmini" data-addbud="year" aria-label="新增全年项目">＋</button></h2><select id="budYearSel" class="ysel" aria-label="选择年份"></select></div>
-    <div class="list" id="budYear"></div>
-    <div class="btnrow" style="margin-top:14px"><button class="btn pri" id="addBudBtn">新增预算项目</button></div>
-    <details class="card" style="margin-top:14px"><summary id="yrTitle">年度总结</summary><div id="yearSum" style="margin-top:10px"></div></details>
+    <div class="tiles">
+      <button type="button" class="tile" data-pg="pg-sav"><i class="ti">🎯</i><b>存款进度</b><small class="ts" id="ts-sav"></small></button><button type="button" class="tile" data-pg="pg-inc"><i class="ti">💵</i><b>收入</b><small class="ts" id="ts-inc"></small></button><button type="button" class="tile" data-pg="pg-fix"><i class="ti">📌</i><b>固定开销</b><small class="ts" id="ts-fix"></small></button><button type="button" class="tile" data-pg="pg-mon"><i class="ti">🛒</i><b>每月项目</b><small class="ts" id="ts-mon"></small></button><button type="button" class="tile" data-pg="pg-yr"><i class="ti">📅</i><b>全年项目</b><small class="ts" id="ts-yr"></small></button><button type="button" class="tile" data-pg="pg-ysum"><i class="ti">🏆</i><b>年度总结</b><small class="ts" id="ts-ysum"></small></button>
+    </div>
+    <div class="btnrow" style="margin-top:14px"><button class="btn pri" id="addBudBtn">＋ 新增预算项目</button></div>
+
   </section>
 
   <!-- 记录 -->
@@ -601,52 +639,89 @@ path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.1s cubic-b
     <div class="list" id="accList"></div>
     <div class="btnrow" style="margin:14px 0"><button class="btn pri" id="addAccBtn">新增户口</button></div>
     <div id="accHidden"></div>
-    <div class="monthbar" style="margin:22px 0 8px" id="instSec"><h2>Installment（分期 / 贷款）</h2><button class="btn small pri" id="instAdd">＋ 新增</button></div>
-    <div class="list" id="instList"></div>
-    <div class="monthbar" style="margin:22px 0 8px"><h2>借钱 / 代付</h2><span id="loanSum" style="color:var(--ink2)"></span></div>
-    <div class="list" id="loanList"></div>
-    <div class="btnrow" style="margin-top:10px"><button class="btn small pri" data-loan="out">🤝 借出 / 代付</button><button class="btn small" data-loan="back">收回</button><button class="btn small" data-loan="in">借入</button><button class="btn small" data-loan="repay">还钱</button></div>
-    <details class="card" id="settings" style="margin-top:14px"><summary>⚙ 设定</summary>
-      <h3 class="sh">每月从几号开始</h3>
-      <div class="kv" style="align-items:center"><span>填 28 = 10/28 – 11/27 算 11 月</span><div class="divin"><input id="msDay" class="num" inputmode="numeric" style="width:60px" aria-label="每月开始日"><button class="btn small" id="msSave">保存</button></div></div>
-      <h3 class="sh">EPF</h3>
-      <div id="setEpf"></div>
-      <h3 class="sh">支出分类</h3>
-      <div id="catExp"></div>
-      <div class="addline"><input id="newGrp-expense" placeholder="新大类" maxlength="14"><button class="btn small" data-addgrp="expense">新增大类</button></div>
-      <h3 class="sh">收入分类</h3>
-      <div id="catInc"></div>
-      <div class="addline"><input id="newGrp-income" placeholder="新大类" maxlength="14"><button class="btn small" data-addgrp="income">新增大类</button></div>
-      <h3 class="sh">备份</h3>
-      <p class="hint" id="bkDriveInfo" style="margin:0 0 8px"></p>
-      <div class="btnrow"><button class="btn small pri" id="bkDrive">立即备份到 Drive</button><button class="btn small" id="bkDown">下载备份</button><button class="btn small" id="bkRestoreBtn">从备份恢复</button><input type="file" id="bkFile" accept=".json,.txt,application/json,text/plain" hidden></div>
-      <p class="hint" id="bkInfo" style="margin:8px 0 0"></p>
-      <div id="gasBox" class="gasbox"></div><div id="bkDriveList"></div>
-      
-    </details>
+    <div class="tiles">
+      <button type="button" class="tile" data-pg="pg-inst"><i class="ti">💳</i><b>分期 / 贷款</b><small class="ts" id="ts-inst"></small></button><button type="button" class="tile" data-pg="pg-loan"><i class="ti">🤝</i><b>借钱 / 代付</b><small class="ts" id="ts-loan"></small></button><button type="button" class="tile" data-pg="pg-set"><i class="ti">⚙️</i><b>设定</b><small class="ts" id="ts-set"></small></button>
+    </div>
+
   </section>
 
   <!-- EPF -->
   <section id="v-epf" hidden>
     <h2>🏖️ 退休预报</h2>
     <div class="card" id="rtCard"></div>
-    <div class="card" id="rtWhat" style="margin-top:12px"></div>
-    <details class="card fold2" style="margin-top:12px"><summary>🎯 一次性大开销（结婚、买车…）</summary><div id="rtBig" style="margin-top:8px"></div></details>
-    <div class="card" id="rtChart" style="margin-top:12px"></div>
-    <details class="card fold2" style="margin-top:12px" id="salD"><summary>⚖️ 薪水对比：CSC vs IoT</summary><div id="salCmp" style="margin-top:8px"></div></details>
-    <details class="card fold2" style="margin-top:12px"><summary>💼 收入预测（薪水怎么算）</summary><div id="rtInc" style="margin-top:8px"></div></details>
-    <details class="card fold2" style="margin-top:12px" id="rtYearsD"><summary>📊 每年资产明细</summary><div id="rtYears" style="margin-top:8px"></div></details>
-    <details class="card fold2" style="margin-top:12px"><summary>↪️ 资金移动计划（几时拿出来、放去哪里）</summary><div id="rtMoves" style="margin-top:8px"></div></details>
-    <details class="card fold2" style="margin-top:12px"><summary>🗓 人生时间轴</summary><div id="rtTimeline" style="margin-top:8px"></div></details>
-    <details class="card fold2" style="margin-top:12px"><summary>🧾 退休后的生活费</summary><div id="rtPhases" style="margin-top:8px"></div></details>
-    <details class="card fold2" style="margin-top:12px"><summary>⚙️ 假设</summary><div id="rtSet" style="margin-top:8px"></div></details>
-    <h2>我的 EPF <span class="tag">不计入净资产</span></h2>
-    <div class="card" id="myEpfCard"></div>
-    <h2>妈妈的 EPF</h2>
-    <div class="card" id="mumSum"></div>
+    <div class="tiles">
+      <button type="button" class="tile" data-pg="pg-what"><i class="ti">🎛️</i><b>如果……</b><small class="ts" id="ts-what"></small></button><button type="button" class="tile" data-pg="pg-chart"><i class="ti">📈</i><b>资产走势</b><small class="ts" id="ts-chart"></small></button><button type="button" class="tile" data-pg="pg-big"><i class="ti">🎯</i><b>大开销</b><small class="ts" id="ts-big"></small></button><button type="button" class="tile" data-pg="pg-years"><i class="ti">📊</i><b>每年明细</b><small class="ts" id="ts-years"></small></button><button type="button" class="tile" data-pg="pg-inc2"><i class="ti">💼</i><b>收入预测</b><small class="ts" id="ts-inc2"></small></button><button type="button" class="tile" data-pg="pg-sal"><i class="ti">⚖️</i><b>薪水对比</b><small class="ts" id="ts-sal"></small></button><button type="button" class="tile" data-pg="pg-life"><i class="ti">🧾</i><b>退休生活费</b><small class="ts" id="ts-life"></small></button><button type="button" class="tile" data-pg="pg-moves"><i class="ti">↪️</i><b>资金移动</b><small class="ts" id="ts-moves"></small></button><button type="button" class="tile" data-pg="pg-time"><i class="ti">🗓</i><b>人生时间轴</b><small class="ts" id="ts-time"></small></button><button type="button" class="tile" data-pg="pg-myepf"><i class="ti">🧑</i><b>我的 EPF</b><small class="ts" id="ts-myepf"></small></button><button type="button" class="tile" data-pg="pg-mum"><i class="ti">👩</i><b>妈妈 EPF</b><small class="ts" id="ts-mum"></small></button><button type="button" class="tile" data-pg="pg-ass"><i class="ti">⚙️</i><b>假设</b><small class="ts" id="ts-ass"></small></button>
+    </div>
+
   </section>
 </div>
 
+<div id="pages">
+<div class="pg" id="pg-cat" role="dialog" aria-label="花在哪里"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>花在哪里</h2></header><div class="pgbody"><div class="monthbar"><h2 style="margin:0">本月</h2><div class="mnav"><button aria-label="上个月" data-mnav="-1">‹</button><span class="mLabel"></span><button aria-label="下个月" data-mnav="1">›</button></div></div>    <div id="catBars"></div></div></div>
+<div class="pg" id="pg-comp" role="dialog" aria-label="资产分布"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>资产分布</h2></header><div class="pgbody">    <div class="comp">
+      <div class="bar" id="compBar"></div>
+      <div class="legend" id="legend"></div>
+      <p class="hint" style="margin:8px 0 0" id="legNote"></p>
+    </div>
+    <div id="instMini"></div>
+</div></div>
+<div class="pg" id="pg-nw" role="dialog" aria-label="净资产走势"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>净资产走势</h2></header><div class="pgbody">    <div class="card" id="nwCard" style="margin-top:14px"></div></div></div>
+<div class="pg" id="pg-recent" role="dialog" aria-label="最近记录"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>最近记录</h2></header><div class="pgbody"><div class="list" id="recent"></div></div></div>
+<div class="pg" id="pg-sav" role="dialog" aria-label="存款进度"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>存款进度</h2></header><div class="pgbody">    <div class="card" id="savTrack"></div>
+</div></div>
+<div class="pg" id="pg-inc" role="dialog" aria-label="收入"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>收入</h2></header><div class="pgbody">    <div class="monthbar" style="margin-bottom:8px"><h2>本月收入 <button class="addmini" data-addbud="income" aria-label="新增收入">＋</button></h2><span id="incSum" style="color:var(--ink2)"></span></div>
+    <div class="list" id="incList"></div>
+</div></div>
+<div class="pg" id="pg-fix" role="dialog" aria-label="固定开销"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>固定开销</h2></header><div class="pgbody">    <div class="monthbar" style="margin-bottom:8px"><h2>固定开销 <button class="addmini" data-addbud="fixed" aria-label="新增固定开销">＋</button></h2><span class="num" id="fixSum" style="color:var(--ink2)"></span></div>
+    <div class="list" id="fixList"></div>
+</div></div>
+<div class="pg" id="pg-mon" role="dialog" aria-label="每月项目"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>每月项目</h2></header><div class="pgbody">    <h2>每月项目 <button class="addmini" data-addbud="pct" aria-label="新增每月项目">＋</button></h2>
+    <div class="list" id="budMonth"></div>
+</div></div>
+<div class="pg" id="pg-yr" role="dialog" aria-label="全年项目"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>全年项目</h2></header><div class="pgbody">    <div class="monthbar" style="margin-bottom:8px"><h2><span id="budYearTitle">全年项目</span> <button class="addmini" data-addbud="year" aria-label="新增全年项目">＋</button></h2><select id="budYearSel" class="ysel" aria-label="选择年份"></select></div>
+    <div class="list" id="budYear"></div>
+</div></div>
+<div class="pg" id="pg-ysum" role="dialog" aria-label="年度总结"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>年度总结</h2></header><div class="pgbody"><h3 class="sh" id="yrTitle" style="margin-top:0">年度总结</h3><div id="yearSum"></div></div></div>
+<div class="pg" id="pg-inst" role="dialog" aria-label="分期 / 贷款"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>分期 / 贷款</h2></header><div class="pgbody">    <div class="monthbar" style="margin:0 0 8px" id="instSec"><h2 style="margin:0">Installment</h2><button class="btn small pri" id="instAdd">＋ 新增</button></div>
+    <div class="list" id="instList"></div>
+</div></div>
+<div class="pg" id="pg-loan" role="dialog" aria-label="借钱 / 代付"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>借钱 / 代付</h2></header><div class="pgbody">    <div class="monthbar" style="margin:0 0 8px"><h2 style="margin:0">还没还清</h2><span id="loanSum" style="color:var(--ink2)"></span></div>
+    <div class="list" id="loanList"></div>
+    <div class="btnrow" style="margin-top:10px"><button class="btn small pri" data-loan="out">🤝 借出 / 代付</button><button class="btn small" data-loan="back">收回</button><button class="btn small" data-loan="in">借入</button><button class="btn small" data-loan="repay">还钱</button></div>
+</div></div>
+<div class="pg" id="pg-set" role="dialog" aria-label="设定"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>设定</h2></header><div class="pgbody"><div class="tiles"><button type="button" class="tile" data-pg="pg-s-bk"><i class="ti">☁️</i><b>备份</b><small class="ts" id="ts-bk"></small></button><button type="button" class="tile" data-pg="pg-s-cat"><i class="ti">🏷️</i><b>分类</b><small class="ts" id="ts-catn"></small></button><button type="button" class="tile" data-pg="pg-s-epf"><i class="ti">🏛️</i><b>EPF</b><small class="ts" id="ts-sepf"></small></button><button type="button" class="tile" data-pg="pg-s-ms"><i class="ti">📆</i><b>每月从几号开始</b><small class="ts" id="ts-ms"></small></button></div></div></div>
+<div class="pg" id="pg-s-ms" role="dialog" aria-label="每月从几号开始"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>每月从几号开始</h2></header><div class="pgbody">
+      <div class="kv" style="align-items:center"><span>填 28 = 10/28 – 11/27 算 11 月</span><div class="divin"><input id="msDay" class="num" inputmode="numeric" style="width:60px" aria-label="每月开始日"><button class="btn small" id="msSave">保存</button></div></div>
+      </div></div>
+<div class="pg" id="pg-s-epf" role="dialog" aria-label="EPF"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>EPF</h2></header><div class="pgbody">
+      <div id="setEpf"></div>
+      </div></div>
+<div class="pg" id="pg-s-cat" role="dialog" aria-label="分类"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>分类</h2></header><div class="pgbody"><h3 class="sh" style="margin-top:0">支出分类</h3>
+      <div id="catExp"></div>
+      <div class="addline"><input id="newGrp-expense" placeholder="新大类" maxlength="14"><button class="btn small" data-addgrp="expense">新增大类</button></div>
+      <h3 class="sh">收入分类</h3>
+      <div id="catInc"></div>
+      <div class="addline"><input id="newGrp-income" placeholder="新大类" maxlength="14"><button class="btn small" data-addgrp="income">新增大类</button></div>
+      </div></div>
+<div class="pg" id="pg-s-bk" role="dialog" aria-label="备份"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>备份</h2></header><div class="pgbody">
+      <p class="hint" id="bkDriveInfo" style="margin:0 0 8px"></p>
+      <div class="btnrow"><button class="btn small pri" id="bkDrive">立即备份到 Drive</button><button class="btn small" id="bkDown">下载备份</button><button class="btn small" id="bkRestoreBtn">从备份恢复</button><input type="file" id="bkFile" accept=".json,.txt,application/json,text/plain" hidden></div>
+      <p class="hint" id="bkInfo" style="margin:8px 0 0"></p>
+      <div id="gasBox" class="gasbox"></div><div id="bkDriveList"></div>
+      </div></div>
+<div class="pg" id="pg-what" role="dialog" aria-label="如果……"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>如果……</h2></header><div class="pgbody"><div class="card mirror" id="rtMirror"></div><div class="card" id="rtWhat"></div></div></div>
+<div class="pg" id="pg-chart" role="dialog" aria-label="资产走势"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>资产走势</h2></header><div class="pgbody"><div class="card" id="rtChart"></div></div></div>
+<div class="pg" id="pg-big" role="dialog" aria-label="一次性大开销"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>一次性大开销</h2></header><div class="pgbody"><div id="rtBig"></div></div></div>
+<div class="pg" id="pg-years" role="dialog" aria-label="每年资产明细"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>每年资产明细</h2></header><div class="pgbody"><div id="rtYears"></div></div></div>
+<div class="pg" id="pg-inc2" role="dialog" aria-label="收入预测"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>收入预测</h2></header><div class="pgbody"><div id="rtInc"></div></div></div>
+<div class="pg" id="pg-sal" role="dialog" aria-label="薪水对比"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>薪水对比</h2></header><div class="pgbody"><div id="salCmp"></div></div></div>
+<div class="pg" id="pg-life" role="dialog" aria-label="退休后的生活费"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>退休后的生活费</h2></header><div class="pgbody"><div id="rtPhases"></div></div></div>
+<div class="pg" id="pg-moves" role="dialog" aria-label="资金移动计划"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>资金移动计划</h2></header><div class="pgbody"><div id="rtMoves"></div></div></div>
+<div class="pg" id="pg-time" role="dialog" aria-label="人生时间轴"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>人生时间轴</h2></header><div class="pgbody"><div id="rtTimeline"></div></div></div>
+<div class="pg" id="pg-myepf" role="dialog" aria-label="我的 EPF"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>我的 EPF</h2></header><div class="pgbody"><div class="card" id="myEpfCard"></div></div></div>
+<div class="pg" id="pg-mum" role="dialog" aria-label="妈妈的 EPF"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>妈妈的 EPF</h2></header><div class="pgbody"><div class="card" id="mumSum"></div></div></div>
+<div class="pg" id="pg-ass" role="dialog" aria-label="假设"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>假设</h2></header><div class="pgbody"><div id="rtSet"></div></div></div>
+</div>
 <button class="fab" id="fab">＋ 记一笔</button>
 <nav class="tabs" role="tablist"><div class="in">
   <button role="tab" data-tab="home" aria-selected="true">总览</button>
@@ -1872,8 +1947,45 @@ function setTheme(next,btn){ const H=document.documentElement, apply=()=>{ H.dat
   t.finished.finally(()=>H.classList.remove("vt-theme")); }
 try{ const t=localStorage.getItem("mm-theme"); if(t==="dark"||t==="light") document.documentElement.dataset.theme=t; }catch(e){}
 $("#themeBtn").onclick=e=>{ e.stopPropagation(); setTheme(curTheme()==="dark"?"light":"dark",e.currentTarget); };
+// ===== card pages =====
+const pgStack=[];
+function openPg(id,noHist){ const el=document.getElementById(id); if(!el||el.classList.contains("open")) return; pgStack.push(id); el.style.zIndex=8+pgStack.length; el.classList.remove("closing"); el.classList.add("open"); el.scrollTop=0; document.body.classList.add("pg-on"); tabEnter=Date.now();
+  if(id.startsWith("pg-")&&["pg-what","pg-chart","pg-big","pg-years","pg-inc2","pg-sal","pg-life","pg-moves","pg-time","pg-myepf","pg-mum","pg-ass"].includes(id)) try{ renderRetire(); }catch(e){}
+  if(!noHist) try{ history.pushState({pg:id},""); }catch(e){} }
+function closePg(fromPop){ const id=pgStack.pop(); if(!id) return; const el=document.getElementById(id); el.classList.add("closing"); setTimeout(()=>{ el.classList.remove("open","closing"); },260); if(!pgStack.length) document.body.classList.remove("pg-on"); if(!fromPop) try{ history.back(); }catch(e){} }
+function closeAllPg(){ while(pgStack.length){ const id=pgStack.pop(); document.getElementById(id).classList.remove("open","closing"); } document.body.classList.remove("pg-on"); }
+window.addEventListener("popstate",()=>{ if(pgStack.length) closePg(true); });
+document.addEventListener("click",e=>{ const t=e.target.closest("[data-pg]"); if(t){ t.classList.remove("tap"); void t.offsetWidth; t.classList.add("tap"); setTimeout(()=>openPg(t.dataset.pg),120); return; } if(e.target.closest(".pgback")) closePg(); });
+// tile one-liners
+function tsSet(id,html){ const el=document.getElementById(id); if(el&&el.innerHTML!==html) el.innerHTML=html; }
+const firstNum=(sel,i)=>{ const n=document.querySelectorAll(sel+" .num")[i||0]; return n?n.textContent.trim():""; };
+function fillTiles(){ try{
+  const cf=cashFlow(viewMonth), mt=periodTx(viewMonth);
+  const cats={}; mt.filter(t=>t.type==="expense").forEach(t=>cats[t.category]=(cats[t.category]||0)+t.amount); const top=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  tsSet("ts-cat",top?`${esc(top[0])} 最多`:"还没有支出");
+  const cb=$("#compBar"); tsSet("ts-comp",cb?`<span class="tbar">${cb.innerHTML}</span>`:"");
+  tsSet("ts-nw",esc(firstNum("#nwCard")||"—"));
+  const last=allTx().filter(t=>t.date<=today()).sort((a,b)=>(b.date+b.created).localeCompare(a.date+a.created))[0];
+  tsSet("ts-recent",last?esc((last.note||last.category||TXT[last.type]).slice(0,10))+" · "+money0(last.amount):"—");
+  tsSet("ts-sav",esc(firstNum("#savTrack")||"—")); tsSet("ts-inc",esc($("#incSum")?.textContent||"")); tsSet("ts-fix",esc($("#fixSum")?.textContent||""));
+  tsSet("ts-mon",`${document.querySelectorAll("#budMonth .row, #budMonth .fx, #budMonth .bl").length||""} 项`.replace(/^ 项$/,"—")); tsSet("ts-yr",esc($("#budYearSel")?.value||"")); tsSet("ts-ysum",esc(($("#yrTitle")?.textContent||"").replace("年度总结","").trim()||"今年"));
+  tsSet("ts-inst",`${(meta.installs||[]).length} 项`); tsSet("ts-loan",esc($("#loanSum")?.textContent||"没有")); tsSet("ts-set","备份、分类、EPF");
+  tsSet("ts-bk",meta.gas?"自动备份中":"手动"); tsSet("ts-catn",`${meta.categories.expense.length} 个大类`); tsSet("ts-sepf",""); tsSet("ts-ms",`${SD()} 号`);
+  const R=meta.retire||{}; tsSet("ts-what",`${R.retire||50} 岁退休`); tsSet("ts-chart","看曲线"); tsSet("ts-big",`${(R.big||[]).length} 项`); tsSet("ts-years","每一年"); tsSet("ts-inc2","薪水怎么涨"); tsSet("ts-sal","CSC vs IoT");
+  tsSet("ts-life","每个阶段"); tsSet("ts-moves",`${(R.moves||[]).length} 个计划`); tsSet("ts-time","大事件"); tsSet("ts-myepf",esc(firstNum("#myEpfCard")||"—")); tsSet("ts-mum",esc(firstNum("#mumSum",1)||"—")); tsSet("ts-ass","回报、通胀");
+  const rc=$("#rtCard"), mi=$("#rtMirror"); if(rc&&mi&&mi.innerHTML!==rc.innerHTML) mi.innerHTML=rc.innerHTML;
+}catch(e){} }
+// long hints -> tap ⓘ to read
+const HINT_KEEP=new Set(["phMsg","gasMsg","txErr","bkInfo","txEpfInfo"]);
+function foldHints(root){ (root||document).querySelectorAll(".hint:not([data-hf])").forEach(h=>{ h.dataset.hf="1"; const txt=h.textContent.trim();
+  if(HINT_KEEP.has(h.id)||txt.length<=18||h.closest("#pick,#calc,.tile,.ibub")||h.querySelector("input,select,button:not(.ibtn)")) return;
+  const b=document.createElement("button"); b.type="button"; b.className="ibtn"; b.setAttribute("aria-label","说明"); b.textContent="i";
+  const host=h.previousElementSibling; const ok=host&&/^(H2|H3|LABEL|SUMMARY)$/.test(host.tagName)||host&&host.classList&&(host.classList.contains("kv")||host.classList.contains("monthbar"));
+  h.classList.add("ibub"); if(ok&&host.tagName!=="DIV"){ host.appendChild(b); } else { const w=document.createElement("div"); w.className="ihost"; w.appendChild(b); h.before(w); } }); }
+document.addEventListener("click",e=>{ const b=e.target.closest(".ibtn"); if(!b) return; e.preventDefault(); e.stopPropagation(); const host=b.closest(".ihost")||b.parentElement; let h=host.nextElementSibling; while(h&&!h.classList.contains("ibub")) h=h.nextElementSibling; if(h){ h.classList.toggle("show"); b.classList.toggle("on",h.classList.contains("show")); } },true);
+let tileQ=0; new MutationObserver(ms=>{ if(ms.every(m=>m.target.closest&&m.target.closest(".tile"))) return; cancelAnimationFrame(tileQ); tileQ=requestAnimationFrame(()=>{ foldHints(); fillTiles(); }); }).observe(document.body,{childList:true,subtree:true});
 function showTab(t){
-  tabEnter=Date.now();
+  tabEnter=Date.now(); closeAllPg();
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   ["home","bud","tx","acc","epf"].forEach(k=>$("#v-"+k).hidden=k!==t);
   window.scrollTo(0,0);
@@ -2704,7 +2816,7 @@ document.addEventListener("click",e=>{
   const ab=e.target.closest("[data-addbud]"); if(ab){ const k=ab.dataset.addbud; openBud(null,{type:{income:"inc",fixed:"fix",pct:"pct",year:"yexp"}[k]}); return; }
   if(e.target.closest("#incOk")){ const ids=[...document.querySelectorAll("[data-inc]")].filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.inc); meta.incPick={...(meta.incPick||{}),[viewMonth]:ids}; saveMeta(); render(); toast("已确认"); return; }
   if(e.target.closest("[data-goto-bud]")){ showTab("bud"); return; }
-  if(e.target.closest("[data-open-set]")){ showTab("acc"); $("#settings").open=true; $("#settings").scrollIntoView(); return; }
+  if(e.target.closest("[data-open-set]")){ showTab("acc"); openPg("pg-set"); openPg("pg-s-epf"); return; }
   if(e.target.closest("#mySave")){ saveMyEpf(); return; }
   const md=e.target.closest("[data-mydivsave]"); if(md){ saveMyDividend(Number(md.dataset.mydivsave)); return; }
   const ds=e.target.closest("[data-divsave]"); if(ds){ saveDividend(Number(ds.dataset.divsave)); return; }
