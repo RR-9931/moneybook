@@ -1,8 +1,9 @@
 /* 书斋 service worker: lets the app open with no network.
-   The page itself is fetched fresh when online; libraries and fonts are kept once downloaded.
-   Bump VERSION when this file's lists change. */
-const VERSION = 'sz-v2';
-const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+   The app's own files are always fetched fresh when online (saved copy only when offline);
+   libraries and fonts from the CDNs are kept once downloaded.
+   Bump VERSION whenever this file changes. */
+const VERSION = 'sz-v3';
+const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest?v=3', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 const LIBS = [
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
@@ -14,7 +15,8 @@ const LIBS = [
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(VERSION);
-    await c.addAll(SHELL);
+    // cache: 'reload' skips the browser's HTTP cache so a new version never re-saves old files
+    await Promise.all(SHELL.map(u => fetch(new Request(u, { cache: 'reload' })).then(r => r.ok && c.put(u, r)).catch(() => {})));
     await Promise.all(LIBS.map(u => c.add(u).catch(() => {})));
     await self.skipWaiting();
   })());
@@ -30,9 +32,8 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.hostname.endsWith('supabase.co')) return;            // sync traffic: never cache
-  const sameOrigin = url.origin === self.location.origin;
-  if (sameOrigin && (req.mode === 'navigate' || /\/(index\.html|config\.js)?$/.test(url.pathname) || url.pathname.endsWith('config.js'))) {
-    // the app page: newest when online, saved copy when offline
+  if (url.origin === self.location.origin) {
+    // the app's own files: newest when online, saved copy when offline
     e.respondWith((async () => {
       const c = await caches.open(VERSION);
       try {
@@ -40,13 +41,13 @@ self.addEventListener('fetch', e => {
         if (r.ok) c.put(req.mode === 'navigate' ? './index.html' : req, r.clone());
         return r;
       } catch (err) {
-        return (await c.match(req, { ignoreSearch: true })) || (await c.match('./index.html')) || Response.error();
+        return (await c.match(req, { ignoreSearch: req.mode === 'navigate' })) || (req.mode === 'navigate' && await c.match('./index.html')) || Response.error();
       }
     })());
     return;
   }
-  if (sameOrigin || /(^|\.)(jsdelivr\.net|cdnjs\.cloudflare\.com|fonts\.googleapis\.com|fonts\.gstatic\.com)$/.test(url.hostname)) {
-    // libraries, fonts, icons: saved copy first, refreshed in the background
+  if (/(^|\.)(jsdelivr\.net|cdnjs\.cloudflare\.com|fonts\.googleapis\.com|fonts\.gstatic\.com)$/.test(url.hostname)) {
+    // libraries and fonts: saved copy first, refreshed in the background
     e.respondWith((async () => {
       const c = await caches.open(VERSION);
       const hit = await c.match(req);
