@@ -1,5 +1,5 @@
 // 我的钱簿 service worker — network first (always newest when online), cache fallback (works offline)
-const CACHE = "moneybook-v3";
+const CACHE = "moneybook-v4";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith("moneybook-") && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
@@ -19,4 +19,18 @@ self.addEventListener("fetch", e => {
       return (await c.match(req.mode === "navigate" ? "index.html" : req)) || (await c.match(req, { ignoreSearch: true })) || Response.error();
     }
   })());
+});
+
+// push notifications from Supabase (moneybook-push)
+self.addEventListener("push", e => {
+  let d = {}; try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data && e.data.text() }; }
+  e.waitUntil(self.registration.showNotification(d.title || "我的钱簿", { body: d.body || "", tag: d.tag || undefined, icon: "icon-192.png", data: { url: d.url || "./" } }));
+});
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || "./", self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(cs => {
+    for (const c of cs) if (c.url.startsWith(self.registration.scope)) { if ("navigate" in c) c.navigate(url); return c.focus(); }
+    return self.clients.openWindow(url);
+  }));
 });
