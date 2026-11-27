@@ -614,6 +614,56 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
 .hint.ibub.show{display:block;background:color-mix(in srgb,var(--brand,#7C6CF2) 10%,var(--paper));color:var(--ink);border-radius:14px;padding:10px 12px!important;margin:8px 0!important;font-size:13px;animation:bub .3s cubic-bezier(.34,1.56,.64,1) both;transform-origin:top right}
 @keyframes bub{from{opacity:0;transform:scale(.85) translateY(-6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.tile,#pages .pg.open,#pages .pg.closing,.pgbody>*,#accList>.row,.hint.ibub.show{animation:none!important}}
+/* 存款目标 */
+.goalcard{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border-left:5px solid var(--jade)!important}
+.goalcard .gpct{font-weight:800;color:var(--jade)}
+.gpig{display:inline-block}.gpig.happy{animation:bob 1.6s ease-in-out infinite}
+.gbar{position:relative;height:14px;border-radius:99px;background:var(--line);margin:10px 0 6px;overflow:visible}
+.gbar.big{height:20px}
+.gbar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--jade),#7DD3B0);transform-origin:left;animation:growX .9s cubic-bezier(.34,1.3,.64,1) both}
+.gbar>em{position:absolute;top:-4px;bottom:-4px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--ink);opacity:.55}
+.gtxt{font-size:13px;font-weight:600}
+.gcardbig{text-align:left}
+.gring{display:flex;flex-direction:column;align-items:center;margin:4px 0 10px}
+.gring b{font-size:44px;font-weight:800;color:var(--jade);line-height:1.1}.gring small{color:var(--ink2)}
+.gmon{position:relative;display:flex;gap:4px;align-items:flex-end}
+.gm{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.gcol{height:110px;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.gcol i{display:block;width:70%;max-width:22px;border-radius:6px 6px 2px 2px;background:var(--sky);transform-origin:bottom;animation:growY .7s cubic-bezier(.34,1.3,.64,1) both}
+.gcol i.ok{background:var(--jade)}.gcol i.neg{background:var(--neg)}
+.gm small{font-size:11px;color:var(--ink2);height:16px}
+.gavg{position:absolute;left:0;right:0;border-top:2px dashed var(--gold);pointer-events:none}
+.gavg span{position:absolute;left:0;top:-20px;font-size:11px;color:var(--gold);font-weight:700;background:var(--paper);padding:0 6px;border-radius:6px}
+@keyframes growY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+/* 年度报告 */
+.yhero{text-align:center;padding:20px 12px;border-radius:24px;margin:10px 0 12px;color:#fff;background:linear-gradient(135deg,var(--brand,#7C6CF2),#F472B6);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both}
+.yh1{font-size:14px;opacity:.9}.yh2{font-size:34px;font-weight:800;margin:2px 0}.yh3{font-size:13px;opacity:.95}
+.ygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ygrid .card{margin:0;display:flex;flex-direction:column;gap:2px}.ygrid small{color:var(--ink2);font-size:12px}.ygrid b{font-size:18px}
+.yvs{font-size:11px!important;font-weight:700}
+.ychart{display:flex;gap:3px;align-items:flex-end}
+.yc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ycol{height:120px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px}
+.ycol i{display:block;width:40%;max-width:10px;border-radius:4px 4px 1px 1px;transform-origin:bottom;animation:growY .7s cubic-bezier(.34,1.3,.64,1) both}
+.ycol i.i,.ylg em.i{background:var(--jade)}.ycol i.o,.ylg em.o{background:var(--seal)}
+.yc small{font-size:11px;color:var(--ink2)}
+.ylg{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--ink2);margin-top:6px}.ylg em{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.ytop{display:grid;grid-template-columns:28px 1fr auto;grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:6px 0}
+.yrk{grid-row:1/3;font-size:18px;text-align:center;font-weight:800;color:var(--ink2)}
+.ynm{font-weight:700}.ytop .num{font-weight:700}
+.ytk{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.ytk i{display:block;height:100%;border-radius:99px;transform-origin:left;animation:growX .8s ease both}
+.ytop small{font-size:11px;color:var(--ink2);text-align:right}
+.yfacts .kv{padding:4px 0}.yfsub{margin:-2px 0 6px;font-size:12px;color:var(--ink2)}
+/* 多币种 */
+.fxbar{display:flex;align-items:center;gap:8px;margin:-6px 0 10px;flex-wrap:wrap}
+.fxcur{border:0;border-radius:99px;padding:5px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:color-mix(in srgb,var(--brand,#7C6CF2) 14%,transparent);color:var(--brand,#7C6CF2)}
+.fxinfo{font-size:12px;color:var(--ink2);flex:1;min-width:0}
+.fxinfo b{color:var(--ink)}
+.fxset{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:10px;border-radius:12px;background:var(--bg)}
+.fxset input{border:1px solid var(--line);border-radius:8px;padding:4px 6px;font:inherit;background:var(--paper);color:var(--ink)}
+.pgrid button small{font-size:11px;color:var(--ink2)}
+.pgrid button[aria-pressed="true"] small{color:inherit;opacity:.9}
+@media (prefers-reduced-motion:reduce){.gbar>i,.gcol i,.ycol i,.ytk i,.yhero,.gpig.happy{animation:none!important}}
 </style>
 </head>
 <body>
@@ -638,6 +688,7 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
       <div class="mnav"><button aria-label="上个月" data-mnav="-1">‹</button><span class="mLabel"></span><button aria-label="下个月" data-mnav="1">›</button></div>
     </div>
     <button class="card mcard" id="homeMonth" data-goto-bud></button>
+    <button type="button" class="card goalcard" id="goalCard" data-pg="pg-goal"></button>
     <div class="tiles">
       <button type="button" class="tile" data-pg="pg-cat"><i class="ti">🍜</i><b>花在哪里</b><small class="ts" id="ts-cat"></small></button><button type="button" class="tile" data-pg="pg-comp"><i class="ti">🧩</i><b>资产分布</b><small class="ts" id="ts-comp"></small></button><button type="button" class="tile" data-pg="pg-nw"><i class="ti">📈</i><b>净资产走势</b><small class="ts" id="ts-nw"></small></button><button type="button" class="tile" data-pg="pg-recent"><i class="ti">🧾</i><b>最近记录</b><small class="ts" id="ts-recent"></small></button>
     </div>
@@ -653,7 +704,7 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
     <div id="budAlert"></div>
     <div class="card" id="monthCard"></div>
     <div class="tiles">
-      <button type="button" class="tile" data-pg="pg-sav"><i class="ti">🎯</i><b>存款进度</b><small class="ts" id="ts-sav"></small></button><button type="button" class="tile" data-pg="pg-inc"><i class="ti">💵</i><b>收入</b><small class="ts" id="ts-inc"></small></button><button type="button" class="tile" data-pg="pg-fix"><i class="ti">📌</i><b>固定开销</b><small class="ts" id="ts-fix"></small></button><button type="button" class="tile" data-pg="pg-mon"><i class="ti">🛒</i><b>每月项目</b><small class="ts" id="ts-mon"></small></button><button type="button" class="tile" data-pg="pg-yr"><i class="ti">📅</i><b>全年项目</b><small class="ts" id="ts-yr"></small></button><button type="button" class="tile" data-pg="pg-ysum"><i class="ti">🏆</i><b>年度总结</b><small class="ts" id="ts-ysum"></small></button>
+      <button type="button" class="tile" data-pg="pg-sav"><i class="ti">🎯</i><b>存款进度</b><small class="ts" id="ts-sav"></small></button><button type="button" class="tile" data-pg="pg-inc"><i class="ti">💵</i><b>收入</b><small class="ts" id="ts-inc"></small></button><button type="button" class="tile" data-pg="pg-fix"><i class="ti">📌</i><b>固定开销</b><small class="ts" id="ts-fix"></small></button><button type="button" class="tile" data-pg="pg-mon"><i class="ti">🛒</i><b>每月项目</b><small class="ts" id="ts-mon"></small></button><button type="button" class="tile" data-pg="pg-yr"><i class="ti">📅</i><b>全年项目</b><small class="ts" id="ts-yr"></small></button><button type="button" class="tile" data-pg="pg-ysum"><i class="ti">🏆</i><b>年度报告</b><small class="ts" id="ts-ysum"></small></button>
     </div>
     <div class="btnrow" style="margin-top:14px"><button class="btn pri" id="addBudBtn">＋ 新增预算项目</button></div>
 
@@ -723,7 +774,8 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
 <div class="pg" id="pg-yr" role="dialog" aria-label="全年项目"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>全年项目</h2></header><div class="pgbody">    <div class="monthbar" style="margin-bottom:8px"><h2><span id="budYearTitle">全年项目</span> <button class="addmini" data-addbud="year" aria-label="新增全年项目">＋</button></h2><select id="budYearSel" class="ysel" aria-label="选择年份"></select></div>
     <div class="list" id="budYear"></div>
 </div></div>
-<div class="pg" id="pg-ysum" role="dialog" aria-label="年度总结"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>年度总结</h2></header><div class="pgbody"><h3 class="sh" id="yrTitle" style="margin-top:0">年度总结</h3><div id="yearSum"></div></div></div>
+<div class="pg" id="pg-goal" role="dialog" aria-label="存款目标"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>存款目标</h2></header><div class="pgbody" id="goalBody"></div></div>
+<div class="pg" id="pg-ysum" role="dialog" aria-label="年度报告"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2 id="yrTitle">年度报告</h2></header><div class="pgbody"><div id="yearSum"></div></div></div>
 <div class="pg" id="pg-inst" role="dialog" aria-label="分期 / 贷款"><header class="pghd"><button type="button" class="pgback" aria-label="返回">‹</button><h2>分期 / 贷款</h2></header><div class="pgbody">    <div class="monthbar" style="margin:0 0 8px" id="instSec"><h2 style="margin:0">Installment</h2><button class="btn small pri" id="instAdd">＋ 新增</button></div>
     <div class="list" id="instList"></div>
 </div></div>
@@ -787,6 +839,7 @@ html .yc>summary::before,html .yc>summary::after{display:none!important;content:
   <div class="chips" id="quick" style="margin-bottom:10px"></div>
   <p class="hint" id="txHint"></p>
   <div class="field"><label for="txAmt" id="txAmtLbl">金额 (RM)</label><input id="txAmt" data-calc class="amtin num" inputmode="decimal" placeholder="0.00"></div>
+  <div class="fxbar" id="fxBar"><button type="button" class="fxcur" id="fxCur">🇲🇾 RM</button><span class="fxinfo" id="fxInfo"></span></div>
   <div class="field" id="fCat" style="margin-bottom:0"><button type="button" class="frow" id="catRow"><span class="l" id="catRowLbl">分类</span><span class="v" id="catRowV"></span></button><div hidden><div class="chips" id="txGroups"></div><div class="chips" id="txCats"></div></div></div>
   <label class="check" id="fEpf"><input type="checkbox" id="txEpf"><span>这笔有扣 EPF（反推我的 EPF）<br><span id="txEpfInfo" style="color:var(--ink2);font-size:13px"></span></span></label>
   <button type="button" class="frow" id="accRow"><span class="l" id="txAccLbl">户口</span><span class="v" id="accRowV"></span></button><select id="txAcc" hidden></select>
@@ -1116,7 +1169,7 @@ function applyMeta(v){
   m.retire=v.retire?{...v.retire}:null; m.incModel=v.incModel?{...v.incModel}:null; m.salCmp=v.salCmp?{...v.salCmp}:null;
   m.incPick={...(v.incPick||{})}; m.alertSeen={...(v.alertSeen||{})}; m.recapSeen={...(v.recapSeen||{})};
   m.monthStart=Number(v.monthStart)||1; m.skin=v.skin||"classic";
-  m.lastBackup=v.lastBackup||null; m.resetAt=v.resetAt||""; m.driveFolderId=v.driveFolderId||""; m.lastDriveBackup=v.lastDriveBackup||null; m.lastDriveUrl=v.lastDriveUrl||""; m.gas=v.gas&&v.gas.url?{...v.gas}:null; m.notif=v.notif?{...v.notif}:null; m.dupWedAsked=!!v.dupWedAsked;
+  m.lastBackup=v.lastBackup||null; m.resetAt=v.resetAt||""; m.driveFolderId=v.driveFolderId||""; m.lastDriveBackup=v.lastDriveBackup||null; m.lastDriveUrl=v.lastDriveUrl||""; m.gas=v.gas&&v.gas.url?{...v.gas}:null; m.notif=v.notif?{...v.notif}:null; m.dupWedAsked=!!v.dupWedAsked; m.goal={...(v.goal||{})}; m.fx=v.fx?{...v.fx}:null;
   m.mumEpf={...DEFAULT_MUM,...(v.mumEpf||{}),manual:(v.mumEpf?.manual||[]).map(x=>({...x})),dividends:{...(v.mumEpf?.dividends||{})}};
   meta=m;
 }
@@ -1316,7 +1369,7 @@ function render(){
   if(document.activeElement?.id!=="msDay") $("#msDay").value=SD();
   const rl=rangeLabel(viewMonth);
   document.querySelectorAll(".mLabel").forEach(e=>e.innerHTML=esc(monthLabel(viewMonth))+(rl?`<small class="rng">${rl}</small>`:""));
-  renderHome(); renderBudget(); renderTx(); renderAcc(); renderCats(); renderEpf(); renderCC(); renderYear(); renderLoans(); renderInsts(); renderInstMini(); renderNw(); renderRecap(); renderBudAlert(); if(!$("#v-epf").hidden) renderRetire(); markCalc();
+  renderHome(); renderBudget(); renderTx(); renderAcc(); renderCats(); renderEpf(); renderCC(); renderYear(); renderGoal(); renderLoans(); renderInsts(); renderInstMini(); renderNw(); renderRecap(); renderBudAlert(); if(!$("#v-epf").hidden) renderRetire(); markCalc();
 }
 function pctBar(v,max,color){const w=max>0?Math.min(100,v/max*100):0;return `<div class="track"><i style="width:${w}%;background:${color}"></i></div>`}
 
@@ -1551,7 +1604,7 @@ function txRow(t){
   else if(t.type==="transfer"){ title=t.who?(to?.type==="recv"?`借出给 ${t.who}`:a?.type==="recv"?`${t.who} 还钱`:to?.type==="payable"?`还给 ${t.who}`:`跟 ${t.who} 借`):(a?.name||"?")+" → "+(to?.name||"?"); }
   else { title="余额调整"; cls=t.amount<0?"neg":"pos"; color="var(--gold)"; ch="调"; }
   if(colorful()){ if(t.type==="expense"||t.type==="income"){const st=gStyle(t.type,t.category);color=st.c;ch=st.e;} else if(t.type==="transfer"){color="#0EA5E9";ch="🔁";} else {color="#F59E0B";ch="⚖️";} }
-  const sub=[t.date.slice(5).replace("-","/"), t.type!=="transfer"?(a?.name||"已删除户口"):(t.category&&!t.who?`🔁 ${a?.name||"?"} → ${to?.name||"?"}`:t.category?`🏷 ${t.category}`:""), t.note||""].filter(Boolean).join("  ");
+  const sub=[t.date.slice(5).replace("-","/"), t.type!=="transfer"?(a?.name||"已删除户口"):(t.category&&!t.who?`🔁 ${a?.name||"?"} → ${to?.name||"?"}`:t.category?`🏷 ${t.category}`:""), t.fx?`💱 ${t.fx.c} ${money(t.fx.a)}`:"", t.note||""].filter(Boolean).join("  ");
   return `<button class="row" data-tx="${t.id}" data-txm="${t.date.slice(0,7)}"><span class="dot" style="background:${color}">${esc(ch)}</span><span class="main"><span class="t" style="display:block">${esc(title)}${t.date>today()?'<span class="future">未到</span>':""}${t.type==="income"&&isEpfIncome(t)?'<span class="tag">EPF</span>':""}${t.photos?.length?'<span class="clip">📎</span>':""}</span><span class="s" style="display:block">${esc(sub)}</span></span><span class="amt num ${cls}">${t.type==="transfer"?money(amt):money(amt,true)}</span></button>`;
 }
 var histId=null;
@@ -2038,7 +2091,7 @@ function fillTiles(){ try{
   const last=allTx().filter(t=>t.date<=today()).sort((a,b)=>(b.date+b.created).localeCompare(a.date+a.created))[0];
   tsSet("ts-recent",last?esc((last.note||last.category||TXT[last.type]).slice(0,10))+" · "+money0(last.amount):"—");
   tsSet("ts-sav",esc(firstNum("#savTrack")||"—")); tsSet("ts-inc",esc($("#incSum")?.textContent||"")); tsSet("ts-fix",esc($("#fixSum")?.textContent||""));
-  tsSet("ts-mon",`${document.querySelectorAll("#budMonth .row, #budMonth .fx, #budMonth .bl").length||""} 项`.replace(/^ 项$/,"—")); tsSet("ts-yr",esc($("#budYearSel")?.value||"")); tsSet("ts-ysum",esc(($("#yrTitle")?.textContent||"").replace("年度总结","").trim()||"今年"));
+  tsSet("ts-mon",`${document.querySelectorAll("#budMonth .row, #budMonth .fx, #budMonth .bl").length||""} 项`.replace(/^ 项$/,"—")); tsSet("ts-yr",esc($("#budYearSel")?.value||"")); tsSet("ts-ysum",esc(($("#yrTitle")?.textContent||"").replace("年度报告","").trim()||"今年"));
   tsSet("ts-inst",`${(meta.installs||[]).length} 项`); tsSet("ts-loan",esc($("#loanSum")?.textContent||"没有")); tsSet("ts-set","备份、分类、EPF");
   tsSet("ts-bk",meta.gas?"自动备份中":"手动"); tsSet("ts-catn",`${meta.categories.expense.length} 个大类`); tsSet("ts-sepf",""); tsSet("ts-ms",`${SD()} 号`);
   const R=meta.retire||{}; tsSet("ts-asset","图 + 每一年"); tsSet("ts-income","薪水怎么涨"); tsSet("ts-plan",`${(R.big||[]).length} 笔大开销 · ${(R.moves||[]).length} 个搬钱`); tsSet("ts-life","每个阶段花多少"); tsSet("ts-ass",`${R.retire||50} 岁退休 · 通胀 ${Math.round((R.infl||0.03)*1000)/10}%`);
@@ -2189,7 +2242,7 @@ function calcEval(str){
   function expr(){ let v=term(); while(peek()==="+"||peek()==="-"){ const o=s[i++]; const r=term(); v=o==="+"?v+r:v-r; } return v; }
   try{ const v=expr(); return i===s.length&&isFinite(v)?Math.round(v*100)/100:NaN; }catch(e){ return NaN; }
 }
-function calcDraw(){ if(calcT) calcT.value=cx.replace(/\*/g,"×").replace(/\//g,"÷"); $("#cExpr").textContent=cx.replace(/\*/g,"×").replace(/\//g,"÷").replace(/-/g,"−")||"0"; const v=calcEval(cx); $("#cRes").textContent=/[+\-*/]/.test(cx.slice(1))&&!isNaN(v)?"= "+money(v):""; }
+function calcDraw(){ if(calcT) calcT.value=cx.replace(/\*/g,"×").replace(/\//g,"÷"); $("#cExpr").textContent=cx.replace(/\*/g,"×").replace(/\//g,"÷").replace(/-/g,"−")||"0"; const v=calcEval(cx); $("#cRes").textContent=/[+\-*/]/.test(cx.slice(1))&&!isNaN(v)?"= "+money(v):""; if(calcT&&calcT.id==="txAmt") try{ fxDraw(); }catch(e){} }
 function openCalc(inp){
   if(calcT) calcT.classList.remove("calcon");
   calcT=inp; inp.dataset.orig=inp.value; inp.classList.add("calcon"); const v=String(inp.value||"").replace(/,/g,""); cx=(v==="0.00"||v==="0")?"":v.replace(/\.00$/,""); cFresh=cx!==""; calcDraw(); $("#calc").hidden=false;
@@ -2275,6 +2328,7 @@ function setTxType(t){
     const cats=flatCats(t); if(!cats.includes(txState.cat)) txState.cat=cats[0];
     drawTxCats();
   } else if(t==="transfer"){ if(txState.cat&&!flatCats("expense").includes(txState.cat)) txState.cat=null; drawTxCats(); }
+  try{ fxDraw(); }catch(e){}
 }
 document.querySelectorAll("#txType button").forEach(b=>b.onclick=()=>{ if(b.dataset.t==="transfer"&&!txState.editing){txState.cat=null;txState.trGroup=null;} setTxType(b.dataset.t);epfDefault()});
 const catT=()=>txState.type==="income"?"income":"expense";
@@ -2319,7 +2373,7 @@ function openTx(tx){
     const vis=meta.accounts.filter(a=>!a.hidden); if(vis[1]) $("#txTo").value=vis[1].id;
     if(meta.defaultAcc&&[...$("#txAcc").options].some(o=>o.value===meta.defaultAcc)) $("#txAcc").value=meta.defaultAcc;
   }
-  drawRows(); open("#txSheet");
+  fxOnOpen(tx); drawRows(); open("#txSheet");
 }
 $("#fab").onclick=()=>openTx();
 // ---------- pickers (account / category) ----------
@@ -2373,6 +2427,7 @@ $("#txSave").onclick=()=>{
   const accountId=$("#txAcc").value, toAccountId=$("#txTo").value;
   if(t!=="adjust"&&amt<=0){err.textContent="金额要大于 0";return}
   if(t==="transfer"&&accountId===toAccountId){err.textContent="转出和转入不能是同一个户口";return}
+  const fxr=fxApply(amt,t); if(fxr&&fxr.err){err.textContent=fxr.err;return} if(fxr){ amt=fxr.rm; if(amt<=0){err.textContent="金额太小了";return} }
   const editing=txState.editing;
   if(t==="loan"){
     const who=$("#txWho").value.trim(); if(!who){err.textContent="请填名字";return}
@@ -2396,8 +2451,9 @@ $("#txSave").onclick=()=>{
       putTx({...tx,id:gid+"-"+(k+1),created:new Date().toISOString(),amount:k===n-1?last:each,date:dt,note:(tx.note?tx.note+" ":"")+`(${k+1}/${n})`,inst:{id:gid,k:k+1,n},photos:k===0?tx.photos:undefined}); }
     photosCleanupOnClose(true); txSavedFlag=true; close(); render(); toast(`已记 ${n} 期，每期 ${money(each)}`); return;
   }
+  if(fxr) tx.fx=fxr.fx;
   photosCleanupOnClose(true); txSavedFlag=true;
-  putTx(tx,editing); close(); render(); toast(editing?"已修改":"已保存");
+  putTx(tx,editing); close(); render(); toast(editing?"已修改":fxr?`已保存 = RM ${money(amt)}`:"已保存");
 };
 $("#txDel").onclick=async()=>{ const e=txState.editing; if(!e||!await askConfirm("确定删除这笔记录？"))return;
   if(e.inst){ const rest=allTx().filter(x=>x.inst?.id===e.inst.id&&x.id!==e.id&&x.date>e.date); if(rest.length&&await askConfirm(`这是分期 ${e.inst.k}/${e.inst.n}。之后还没到的 ${rest.length} 期也一起删掉吗？`)) rest.forEach(x=>{(x.photos||[]).forEach(delAsset);removeTx(x)}); }
@@ -2697,30 +2753,7 @@ function gapFor(ms){
   return {diff,planD,actD,n};
 }
 
-// ===== yearly summary =====
-function renderYear(){
-  const y=viewMonth.slice(0,4), py=String(Number(y)-1), now=today();
-  $("#yrTitle").textContent=y+" 年度总结";
-  const sum=(yr)=>{const r={inc:0,exp:0,sav:0,grp:{}};[allTx().filter(t=>pm(t.date).slice(0,4)===yr)].forEach(list=>list.forEach(t=>{
-    if(t.date>now) return; const g=lsGroup(t.accountId); if(g==="X"||!g) return;
-    if(t.type==="income") r.inc+=t.amount;
-    if(t.type==="expense"){ r.exp+=t.amount; const k=groupOf("expense",t.category); r.grp[k]=(r.grp[k]||0)+t.amount; }
-    if(t.type==="transfer"){ const g2=lsGroup(t.toAccountId); if(g==="L"&&g2==="I") r.sav+=t.amount; else if(g==="I"&&g2==="L") r.sav-=t.amount; }
-  }));return r};
-  const a=sum(y), b=sum(py);
-  const nwAt=d=>{const g=groups(balances(d));g.debt-=pendingInst(d).total;return g.liquid+g.saving+g.invest+g.retire+g.recv+g.debt};
-  const endD=y+"-12-31"<now?y+"-12-31":now, nw0=nwAt(py+"-12-31"), nw1=nwAt(endD);
-  const rate=a.inc>0?(a.inc-a.exp)/a.inc*100:0;
-  const gk=[...new Set([...Object.keys(a.grp),...Object.keys(b.grp)])].sort((x,z)=>(a.grp[z]||0)-(a.grp[x]||0));
-  $("#yearSum").innerHTML=`
-    <div class="target"><div><small>收入</small><b class="num">${money0(a.inc)}</b></div><div><small>支出</small><b class="num">${money0(a.exp)}</b></div></div>
-    <div class="kv" style="margin-top:8px"><span>存钱率（收入 − 支出）÷ 收入</span><b class="num ${rate<0?"neg":"pos"}">${rate.toFixed(1)}%</b></div>
-    <div class="kv"><span>净存进投资 / EPF（存进 − 拿出）</span><b class="num">RM ${money(a.sav)}</b></div>
-    <div class="kv"><span>净资产变化（${y==now.slice(0,4)?"到今天":"全年"}）</span><b class="num ${nw1-nw0<0?"neg":"pos"}">${nw1-nw0<0?"−":"+"}RM ${money0(Math.abs(nw1-nw0))}</b></div>
-    <h3 style="margin-top:12px;font-size:14px">各大类支出</h3>
-    <div class="scroll"><table class="tight"><tr><th>大类</th><th>${y}</th><th>${py}</th><th>变化</th></tr>${gk.map(k=>{const v=a.grp[k]||0,w=b.grp[k]||0,d=v-w;return `<tr><td>${esc(k)}</td><td class="num">${money0(v)}</td><td class="num">${w?money0(w):"—"}</td><td class="num ${d>0?"neg":d<0?"pos":""}">${w?(d>0?"+":"−")+money0(Math.abs(d)):""}</td></tr>`}).join("")}</table></div>
-`;
-}
+// ===== yearly summary: see 年度账单报告 below =====
 
 // ===== backup / restore =====
 function saveFile(filename,data,mime){ const b=new Blob([data],{type:mime||"application/octet-stream"}), u=URL.createObjectURL(b), a=document.createElement("a"); a.href=u; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
@@ -2993,12 +3026,187 @@ document.addEventListener("click",e=>{
 
 // export
 $("#exportBtn").onclick=async()=>{
-  const rows=[["日期","类型","分类","户口","转入户口","金额","备注"]];
-  allTx().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>rows.push([t.date,TXT[t.type],t.category||"",accById(t.accountId)?.name||"",accById(t.toAccountId)?.name||"",t.amount.toFixed(2),t.note||""]));
+  const rows=[["日期","类型","分类","户口","转入户口","金额","备注","外币","外币金额"]];
+  allTx().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>rows.push([t.date,TXT[t.type],t.category||"",accById(t.accountId)?.name||"",accById(t.toAccountId)?.name||"",t.amount.toFixed(2),t.note||"",t.fx?.c||"",t.fx?t.fx.a.toFixed(2):""]));
   const csv="\ufeff"+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
   try{ saveFile("moneybook-"+today()+".csv",csv,"text/csv"); }
   catch(e){ toast("没有下载"); }
 };
+
+
+// ===== 年度存款目标 =====
+const GOAL_DEFAULT=25000;
+let goalY=null;
+function goalOf(y){ y=String(y); const g=meta.goal||{}; return g[y]!=null?g[y]:(g.def!=null?g.def:GOAL_DEFAULT); }
+function yearPeriods(y){ const out=[], now=curPeriod(); for(let i=1;i<=12;i++){ const m=y+"-"+String(i).padStart(2,"0"); if(m<=now) out.push(m); } return out; }
+function yearSave(y){
+  y=String(y); const ms=yearPeriods(y); let inc=0,out=0,toMum=0,toInv=0; const per=[];
+  ms.forEach(m=>{ const c=cashFlow(m); inc+=c.inc; out+=c.out; toMum+=c.toMum; toInv+=c.toInv; per.push({m,saved:c.saved,inc:c.inc,out:c.out}); });
+  const s0=new Date(periodStart(y+"-01")+"T00:00:00"), s1=new Date(periodEnd(y+"-12")+"T23:59:59"), n=new Date();
+  const frac=Math.max(0,Math.min(1,(n-s0)/(s1-s0)));
+  const left=12-ms.length+(ms.length&&ms[ms.length-1]===curPeriod()?1:0);
+  return {y,goal:goalOf(y),saved:r2(inc-out),inc:r2(inc),out:r2(out),toMum:r2(toMum),toInv:r2(toInv),per,frac,left};
+}
+function goalLine(G){
+  const exp=G.goal*G.frac, d=r2(G.saved-exp), need=G.goal-G.saved;
+  if(G.saved>=G.goal) return {cls:"pos",txt:`🎉 达标了！多存了 RM ${money0(G.saved-G.goal)}`};
+  if(G.frac>=1) return {cls:"neg",txt:`差 RM ${money0(need)} 没达标`};
+  const pm2=G.left>0?need/G.left:need;
+  return d>=0?{cls:"pos",txt:`比进度快 RM ${money0(d)} 💪 之后每月存 RM ${money0(pm2)} 就够`}
+             :{cls:"neg",txt:`落后进度 RM ${money0(-d)}，之后每月要存 RM ${money0(pm2)}`};
+}
+function goalBar(G,big){
+  const p=G.goal>0?Math.max(0,Math.min(100,G.saved/G.goal*100)):0, pace=Math.min(100,G.frac*100);
+  return `<div class="gbar${big?" big":""}"><i style="width:${p}%"></i>${G.frac<1?`<em style="left:${pace}%" title="今天应该到这里"></em>`:""}</div>`;
+}
+function renderGoal(){
+  const y=curPeriod().slice(0,4), G=yearSave(y), p=G.goal>0?Math.round(G.saved/G.goal*100):0, L=goalLine(G), ahead=G.saved>=G.goal*G.frac;
+  const el=$("#goalCard"); if(!el) return;
+  el.innerHTML=`<div class="kv"><b><span class="gpig${ahead?" happy":""}">🐷</span> ${y} 存款目标</b><span class="gpct num">${p}%</span></div>
+    <div class="kv" style="align-items:baseline;margin-top:2px"><b class="num" style="font-size:22px">RM ${money0(G.saved)}</b><span class="num" style="color:var(--ink2)">/ ${money0(G.goal)}</span></div>
+    ${goalBar(G)}<div class="gtxt ${L.cls}">${L.txt}</div>`;
+  if(!$("#pg-goal").classList.contains("open")) goalY=null;
+  renderGoalPg();
+}
+function renderGoalPg(){
+  const cy=Number(curPeriod().slice(0,4)); if(goalY==null) goalY=cy;
+  const G=yearSave(goalY), L=goalLine(G), p=G.goal>0?Math.round(G.saved/G.goal*100):0, el=$("#goalBody"); if(!el) return;
+  const kept=r2(G.saved-G.toMum-G.toInv), avg=G.goal/12;
+  const mx=Math.max(avg,...G.per.map(r=>Math.abs(r.saved)),1);
+  const bars=G.per.length?`<div class="gmon">${G.per.map(r=>{const h=Math.abs(r.saved)/mx*100;return `<div class="gm"><div class="gcol"><i class="${r.saved<0?"neg":r.saved>=avg?"ok":""}" style="height:${h}%"></i></div><small>${Number(r.m.slice(5))}月</small></div>`}).join("")}<div class="gavg" style="bottom:calc(20px + ${Math.round(avg/mx*110)}px)"><span>每月 ${money0(avg)}</span></div></div>`:'<p class="hint">这一年还没有记录。</p>';
+  el.innerHTML=`<div class="monthbar"><h2 style="margin:0">${goalY} 年</h2><div class="mnav"><button aria-label="上一年" data-gy="-1">‹</button><span>${goalY}</span><button aria-label="下一年" data-gy="1" ${goalY>=cy?"disabled":""}>›</button></div></div>
+  <div class="card gcardbig">
+    <div class="gring"><b class="num" id="goalPct">${p}%</b><small>完成</small></div>
+    <div class="kv"><span>已经存了</span><b class="num ${G.saved<0?"neg":"pos"}">RM ${money(G.saved)}</b></div>
+    <div class="kv"><span>目标</span><span><b class="num">RM ${money0(G.goal)}</b> <button class="btn small" id="goalEdit">✏️ 改</button></span></div>
+    ${goalBar(G,true)}<div class="gtxt ${L.cls}">${L.txt}</div>
+    <p class="hint">存了 = 收入 − 支出（${goalY} 年 1 月到 12 月）。转进妈妈 EPF、转进投资都算存了，因为它们不算支出。竖线是"今天应该存到这里"。</p>
+  </div>
+  <h3 class="sh">存下来的钱去了哪里</h3>
+  <div class="card">
+    <div class="kv"><span>👩 转进妈妈 EPF</span><b class="num">${money(G.toMum)}</b></div>
+    <div class="kv"><span>🌱 转进投资 / 存款户口</span><b class="num">${money(G.toInv)}</b></div>
+    <div class="kv"><span>💵 留在手上</span><b class="num ${kept<0?"neg":""}">${money(kept)}</b></div>
+  </div>
+  <h3 class="sh">每个月存了多少</h3>
+  <div class="card">${bars}</div>`;
+  const pe=$("#goalPct"); if(pe){ pe._v=0; countUp(pe,p,v=>Math.round(v)+"%"); }
+}
+document.addEventListener("click",async e=>{
+  const gy=e.target.closest("[data-gy]"); if(gy){ goalY+=Number(gy.dataset.gy); renderGoalPg(); return; }
+  if(e.target.closest("#goalEdit")){ const y=String(goalY); const v=await askText(`${y} 年要存多少？（RM）`,String(goalOf(y))); if(v==null) return; const n=parseAmt(v); if(isNaN(n)||n<0){ toast("请输入数字"); return; }
+    meta.goal=meta.goal||{}; meta.goal[y]=n; if(y===curPeriod().slice(0,4)) meta.goal.def=n; saveMeta(); render(); renderGoalPg(); toast(`${y} 年目标 RM ${money0(n)}`); }
+});
+
+// ===== 年度账单报告 =====
+let ysY=null;
+function renderYear(){
+  const cy=Number(curPeriod().slice(0,4)); if(ysY==null) ysY=Number(viewMonth.slice(0,4));
+  const y=String(ysY), py=String(ysY-1), now=today();
+  $("#yrTitle").textContent=y+" 年度报告";
+  const collect=yr=>{ const r={inc:0,out:0,grp:{},cat:{},n:0,big:null,mon:[],days:new Set(),toMum:0};
+    yearPeriods(yr).forEach(m=>{ let mi=0,mo=0; txIn("month",m).forEach(t=>{ r.n++; r.days.add(t.date);
+      if(t.type==="income"){ r.inc+=t.amount; mi+=t.amount; }
+      else if(t.type==="expense"){ r.out+=t.amount; mo+=t.amount; const g=groupOf("expense",t.category); r.grp[g]=(r.grp[g]||0)+t.amount; const c=t.category||"其他"; r.cat[c]=(r.cat[c]||0)+t.amount; if(!r.big||t.amount>r.big.amount) r.big=t; }
+      else if(t.type==="transfer"&&!t.who&&t.toAccountId===meta.mumEpf?.accountId&&t.accountId!==meta.mumEpf?.accountId) r.toMum+=t.amount; });
+      r.mon.push({m,inc:r2(mi),out:r2(mo)}); });
+    return r; };
+  const a=collect(y), b=collect(py), saved=r2(a.inc-a.out), rate=a.inc>0?saved/a.inc*100:0, G=yearSave(y), gp=G.goal>0?Math.round(saved/G.goal*100):0;
+  const nwAt=d=>{const g=groups(balances(d));g.debt-=pendingInst(d).total;return g.liquid+g.saving+g.invest+g.retire+g.recv+g.debt};
+  const endD=y+"-12-31"<now?y+"-12-31":now, nwD=r2(nwAt(endD)-nwAt(py+"-12-31"));
+  const nav=`<div class="monthbar"><h2 style="margin:0">${y} 年</h2><div class="mnav"><button aria-label="上一年" data-ysy="-1">‹</button><span>${y}</span><button aria-label="下一年" data-ysy="1" ${ysY>=cy?"disabled":""}>›</button></div></div>`;
+  if(!a.n){ $("#yearSum").innerHTML=nav+'<div class="empty">这一年没有记录。</div>'; return; }
+  const live=y==now.slice(0,4);
+  const mx=Math.max(1,...a.mon.flatMap(r=>[r.inc,r.out]));
+  const months=`<div class="ychart">${a.mon.map(r=>`<div class="yc"><div class="ycol"><i class="i" style="height:${r.inc/mx*100}%"></i><i class="o" style="height:${r.out/mx*100}%"></i></div><small>${Number(r.m.slice(5))}</small></div>`).join("")}</div><div class="ylg"><span><em class="i"></em>收入</span><span><em class="o"></em>支出</span></div>`;
+  const tops=Object.entries(a.cat).sort((p,q)=>q[1]-p[1]).slice(0,5), tmax=tops[0]?.[1]||1;
+  const topH=tops.map(([c,v],i)=>{const st=gStyle("expense",c);return `<div class="ytop"><span class="yrk">${["🥇","🥈","🥉","4","5"][i]}</span><span class="ynm">${esc(st.e||"")} ${esc(c)}</span><span class="num">${money0(v)}</span><div class="ytk"><i style="width:${v/tmax*100}%;background:${st.c||"var(--brand)"}"></i></div><small>${a.out>0?Math.round(v/a.out*100):0}%</small></div>`}).join("");
+  const wm=a.mon.filter(r=>r.out>0), most=wm.slice().sort((p,q)=>q.out-p.out)[0], least=wm.slice().sort((p,q)=>p.out-q.out)[0];
+  const dayN=live?Math.max(1,Math.round((new Date(now)-new Date(periodStart(y+"-01")))/86400000)+1):Math.round((new Date(periodEnd(y+"-12"))-new Date(periodStart(y+"-01")))/86400000)+1;
+  const gk=[...new Set([...Object.keys(a.grp),...Object.keys(b.grp)])].sort((x,z)=>(a.grp[z]||0)-(a.grp[x]||0));
+  const vs=(v,w,good)=>{ if(!w) return ""; const d=(v-w)/w*100; if(Math.abs(d)<0.5) return '<small class="yvs">跟去年差不多</small>'; const up=d>0, ok=good==="up"?up:!up; return `<small class="yvs ${ok?"pos":"neg"}">比去年${up?"多":"少"} ${Math.abs(Math.round(d))}%</small>`; };
+  $("#yearSum").innerHTML=nav+`
+  <div class="yhero">
+    <div class="yh1">${live?"今年到今天":"全年"}存了</div>
+    <div class="yh2 num" id="ysSaved">RM ${money0(saved)}</div>
+    <div class="yh3">存钱率 <b>${rate.toFixed(1)}%</b> · 目标完成 <b>${gp}%</b></div>
+  </div>
+  <div class="ygrid">
+    <div class="card"><small>收入</small><b class="num">${money0(a.inc)}</b>${vs(a.inc,b.inc,"up")}</div>
+    <div class="card"><small>支出</small><b class="num">${money0(a.out)}</b>${vs(a.out,b.out,"down")}</div>
+    <div class="card"><small>👩 妈妈 EPF</small><b class="num">${money0(a.toMum)}</b>${vs(a.toMum,b.toMum,"up")}</div>
+    <div class="card"><small>净资产变化</small><b class="num ${nwD<0?"neg":"pos"}">${nwD<0?"−":"+"}${money0(Math.abs(nwD))}</b></div>
+  </div>
+  <h3 class="sh">📅 每个月</h3><div class="card">${months}</div>
+  <h3 class="sh">🏆 花最多的分类</h3><div class="card">${topH||'<p class="hint">没有支出。</p>'}</div>
+  <h3 class="sh">✨ 一些数字</h3>
+  <div class="card yfacts">
+    ${a.big?`<div class="kv"><span>💸 最贵的一笔</span><b class="num">${money0(a.big.amount)}</b></div><p class="yfsub">${esc(a.big.date.slice(5).replace("-","/"))} · ${esc(a.big.category||"")}${a.big.note?" · "+esc(a.big.note):""}</p>`:""}
+    ${most?`<div class="kv"><span>🔥 花最多的月份</span><b>${Number(most.m.slice(5))} 月 · <span class="num">${money0(most.out)}</span></b></div>`:""}
+    ${least&&least!==most?`<div class="kv"><span>🧊 最省的月份</span><b>${Number(least.m.slice(5))} 月 · <span class="num">${money0(least.out)}</span></b></div>`:""}
+    <div class="kv"><span>☕ 平均每天花</span><b class="num">${money(a.out/dayN)}</b></div>
+    <div class="kv"><span>📝 记了几笔</span><b>${a.n} 笔 · ${a.days.size} 天</b></div>
+  </div>
+  <h3 class="sh">📊 各大类 vs ${py}</h3>
+  <div class="card"><div class="scroll"><table class="tight"><tr><th>大类</th><th>${y}</th><th>${py}</th><th>变化</th></tr>${gk.map(k=>{const v=a.grp[k]||0,w=b.grp[k]||0,d=v-w;return `<tr><td>${esc(k)}</td><td class="num">${money0(v)}</td><td class="num">${w?money0(w):"—"}</td><td class="num ${d>0?"neg":d<0?"pos":""}">${w?(d>0?"+":"−")+money0(Math.abs(d)):""}</td></tr>`}).join("")}</table></div></div>
+  <p class="hint">收入、支出跟「预算」页的算法一样（自己户口之间转账、借钱、转进妈妈 EPF 都不算支出）。${live?"今年还没过完，数字到今天为止。":""}</p>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-ysy]"); if(b){ ysY+=Number(b.dataset.ysy); renderYear(); } });
+
+// ===== 多币种 =====
+const FX_LIST=[["MYR","🇲🇾","马币 RM"],["SGD","🇸🇬","新币"],["USD","🇺🇸","美金"],["CNY","🇨🇳","人民币"],["TWD","🇹🇼","台币"],["HKD","🇭🇰","港币"],["THB","🇹🇭","泰铢"],["IDR","🇮🇩","印尼盾"],["JPY","🇯🇵","日元"],["KRW","🇰🇷","韩元"],["VND","🇻🇳","越南盾"],["PHP","🇵🇭","菲律宾比索"],["AUD","🇦🇺","澳币"],["NZD","🇳🇿","纽币"],["GBP","🇬🇧","英镑"],["EUR","🇪🇺","欧元"],["CHF","🇨🇭","瑞士法郎"],["CAD","🇨🇦","加币"],["INR","🇮🇳","印度卢比"],["AED","🇦🇪","迪拉姆"]];
+const fxS={cur:"MYR",lock:null};
+function fxFee(){ const f=meta.fx?.fee; return f!=null?f:0.05; }
+function fxCache(){ return lsGet("mb:fx",null); }
+function fxFlag(c){ return (FX_LIST.find(x=>x[0]===c)||[c,"💱"])[1]; }
+async function fxFetch(force){
+  const c=fxCache(); if(!force&&c&&Date.now()-c.t<6*3600e3) return c;
+  const tries=[["https://open.er-api.com/v6/latest/MYR",j=>j.result==="success"&&j.rates],["https://api.frankfurter.dev/v1/latest?base=MYR",j=>j.rates&&{...j.rates,MYR:1}]];
+  for(const [u,pick] of tries){ try{ const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),6000); const r=await fetch(u,{signal:ctl.signal,cache:"no-store"}); clearTimeout(to); if(!r.ok) continue; const rates=pick(await r.json()); if(rates&&rates.SGD){ const v={t:Date.now(),rates}; lsSet("mb:fx",v); return v; } }catch(e){} }
+  return c;
+}
+function fxRate(c){ if(c==="MYR") return 1; if(fxS.lock&&fxS.lock.c===c) return fxS.lock.r; const k=fxCache(); const per=k?.rates?.[c]; return per?1/per:null; }
+function fxMult(type){ return type==="expense"?1+fxFee():1-fxFee(); }
+function fxOn(){ return ["expense","income","transfer"].includes(txState.type); }
+function fxLbl(){ return fxS.cur!=="MYR"&&fxOn()?`金额 (${fxS.cur})`:null; }
+function fxDraw(){
+  const bar=$("#fxBar"); if(!bar) return; const on=fxOn(); bar.hidden=!on; if(!on) return;
+  const c=fxS.cur; $("#fxCur").innerHTML=`${fxFlag(c)} ${c==="MYR"?"RM":c} <span style="opacity:.6">▾</span>`;
+  const l=fxLbl(); if(l) $("#txAmtLbl").textContent=l; else if(txState.type!=="adjust") $("#txAmtLbl").textContent="金额 (RM)";
+  const info=$("#fxInfo"); if(c==="MYR"){ info.innerHTML=""; return; }
+  const r=fxRate(c), amt=parseAmt($("#txAmt").value), k=fxCache(), m=fxMult(txState.type), fp=Math.round(fxFee()*1000)/10;
+  if(!r){ info.innerHTML='<span class="neg">还没有汇率，连上网就会自动拿</span>'; return; }
+  const when=fxS.lock&&fxS.lock.c===c?"用当时的汇率":k?("汇率 "+new Date(k.t).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+(Date.now()-k.t>24*3600e3?" ⚠️ 旧的":"")):"";
+  info.innerHTML=`${isNaN(amt)?"":`≈ <b class="num">RM ${money(r2(amt*r*m))}</b> · `}1 ${c} = ${r.toFixed(4)} RM ${m>1?"+":"−"}${fp}% · ${when}`;
+}
+function fxApply(amt,type){
+  if(fxS.cur==="MYR"||!["expense","income","transfer"].includes(type)) return null;
+  const r=fxRate(fxS.cur); if(!r) return {err:"拿不到汇率，连网再试，或者换回 RM 直接输入"};
+  const lock=fxS.lock&&fxS.lock.c===fxS.cur, eff=lock?fxS.lock.e:r*fxMult(type);
+  return {rm:r2(amt*eff),fx:{c:fxS.cur,a:amt,r,e:Math.round(eff*1e6)/1e6}};
+}
+function fxPick(){
+  closeCalc(true); const recent=lsGet("mb:fxrecent",[]), order=[...new Set(["MYR",...recent,...FX_LIST.map(x=>x[0])])];
+  pk={kind:"fx"}; $("#pkTitle").textContent="选币种"; $("#pkDef").hidden=true;
+  const k=fxCache();
+  $("#pkBody").innerHTML=`<div class="pgrid">${order.map(c=>{const f=FX_LIST.find(x=>x[0]===c);return `<button type="button" data-fxc="${c}" aria-pressed="${c===fxS.cur}"><span class="e">${f?f[1]:"💱"}</span>${c}<small>${f?f[2]:""}</small></button>`}).join("")}</div>
+  <div class="fxset"><label>手续费 <input id="fxFeeIn" class="num" inputmode="decimal" value="${Math.round(fxFee()*1000)/10}" style="width:56px"> %</label><button type="button" class="btn small" id="fxRef">🔄 刷新汇率</button></div>
+  <p class="hint" style="margin:6px 2px 0">支出：汇率 × (1 + 手续费)，因为刷外币卡要多付。收入 / 转账：汇率 × (1 − 手续费)，因为换回 RM 会少拿。${k?" 上次更新："+new Date(k.t).toLocaleString("zh-CN"):""}</p>`;
+  $("#pick").hidden=false;
+}
+$("#pick").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-fxc]"); if(b){ const c=b.dataset.fxc; if(c!==fxS.cur) fxS.lock=null; fxS.cur=c; lsSet("mb:fxcur",{c,t:Date.now()}); if(c!=="MYR"){ const r=lsGet("mb:fxrecent",[]).filter(x=>x!==c); r.unshift(c); lsSet("mb:fxrecent",r.slice(0,4)); } pickClose(); fxDraw(); if(c!=="MYR") fxFetch().then(fxDraw); return; }
+  if(e.target.closest("#fxRef")){ const r=await fxFetch(true); toast(r&&Date.now()-r.t<60e3?"汇率已更新":"拿不到新的汇率"); fxDraw(); fxPick(); }
+});
+$("#pick").addEventListener("change",e=>{ if(e.target.id!=="fxFeeIn") return; const v=parseAmt(e.target.value); if(isNaN(v)||v<0||v>30){ toast("手续费要 0–30%"); return; } meta.fx={...(meta.fx||{}),fee:v/100}; saveMeta(); fxDraw(); toast(`手续费 ${v}%`); });
+$("#fxCur").onclick=fxPick;
+$("#txAmt").addEventListener("input",fxDraw);
+function fxOnOpen(tx){
+  fxS.lock=null;
+  if(tx){ if(tx.fx){ fxS.cur=tx.fx.c; fxS.lock={c:tx.fx.c,r:tx.fx.r,e:tx.fx.e}; $("#txAmt").value=tx.fx.a.toFixed(2); } else fxS.cur="MYR"; }
+  else { const s=lsGet("mb:fxcur",null); fxS.cur=s&&Date.now()-s.t<12*3600e3?s.c:"MYR"; }
+  fxDraw(); if(fxS.cur!=="MYR") fxFetch().then(fxDraw);
+}
 
 load();
 setTimeout(()=>{ try{ const q=new URLSearchParams(location.search); if(!q.toString()) return; history.replaceState(null,"",location.pathname); const t=q.get("tab"); if(t&&document.querySelector(`[data-tab="${t}"]`)) showTab(t); if(q.get("add")) $("#fab").click(); }catch(e){} },700);

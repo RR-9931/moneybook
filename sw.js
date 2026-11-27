@@ -1,5 +1,5 @@
 // 我的钱簿 service worker — network first (always newest when online), cache fallback (works offline)
-const CACHE = "moneybook-v4";
+const CACHE = "moneybook-v5";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith("moneybook-") && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
