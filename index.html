@@ -2831,7 +2831,14 @@ let pushState="?";
 function b64u(x){ const p="=".repeat((4-x.length%4)%4), b=atob((x+p).replace(/-/g,"+").replace(/_/g,"/")); return Uint8Array.from(b,c=>c.charCodeAt(0)); }
 async function pushCheck(){ try{ if(!("serviceWorker" in navigator)||!("PushManager" in window)){ pushState="nosupport"; return; } if(Notification.permission==="denied"){ pushState="denied"; return; }
   const reg=await navigator.serviceWorker.getRegistration(); const sub=reg&&await reg.pushManager.getSubscription(); pushState=sub&&meta.notif&&!meta.notif.off?"on":"off"; }catch(e){ pushState="off"; } }
-function pushErr(e){ e=String(e&&e.message||e); return /fn:401|Missing authorization|Invalid JWT|jwt/i.test(e)?"Supabase 挡住了：Edge Function 的「Verify JWT」还没关（第 3 步）。"
+function pushErr(e){ e=String(e&&e.message||e); return /STUCK:perm/.test(e)?"卡在第 1 步：手机没有跳出允许通知的视窗。去 Chrome 设定 → 网站设定 → 通知，找 rr-9931.github.io 改成允许，再按一次。"
+  :/STUCK:key/.test(e)?"卡在第 2 步：Supabase 的推送程序没有回应。检查 Edge Function 是不是叫 moneybook-push、有没有 Deploy。"
+  :/STUCK:sw/.test(e)?"卡在第 3 步：背景程序没启动。把 app 完全关掉（从最近使用里滑掉）再打开，再按一次。"
+  :/STUCK:sub/.test(e)?"卡在第 4 步：手机的推送服务没有回应。要用 Chrome 装的版本（Samsung Internet 或没有 Google Play 服务的手机会卡在这里）。"
+  :/STUCK:save/.test(e)?"卡在第 5 步：存不进 Supabase。把事后诸葛亮关掉，再按一次。"
+  :/STUCK:test/.test(e)?"卡在第 6 步：订阅好了，但测试通知发不出去。按「发测试通知」再试。"
+  :/AbortError|push service error|Registration failed/i.test(e)?"手机的推送服务拒绝了：要用 Chrome 装的版本，Chrome 的通知也要允许。"
+  :/fn:401|Missing authorization|Invalid JWT|jwt/i.test(e)?"Supabase 挡住了：Edge Function 的「Verify JWT」还没关（第 3 步）。"
   :/fn:404|Requested function was not found|NOT_FOUND/i.test(e)?"找不到推送程序：Edge Function 要叫 moneybook-push（第 2 步）。"
   :/还没跑 moneybook_push|moneybook_push_keys|does not exist|schema cache/i.test(e)?"还没跑推送的 SQL（第 1 步）。"
   :/permission denied/i.test(e)?"表没有开放给登入用户：SQL 要整段重跑一次（第 1 步）。"
@@ -2839,14 +2846,17 @@ function pushErr(e){ e=String(e&&e.message||e); return /fn:401|Missing authoriza
   :/Failed to fetch|NetworkError/i.test(e)?"连不到推送程序：检查网络，或第 2 步还没 Deploy。":"出错了："+e; }
 async function pushTest(){ const se=(await SB.auth.getSession()).data.session; if(!se) throw "auth"; const r=await fetch(fnUrl(),{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+se.access_token},body:JSON.stringify({action:"test"})});
   const j=await r.json().catch(()=>({ok:false,error:r.status})); if(!j.ok) throw "fn:"+(r.status===401&&j.error!=="auth"?401:(j.error||r.status)); return j.sent; }
-async function pushOn(){ if(!("serviceWorker" in navigator)||!("PushManager" in window)) throw "这个浏览器不支持推送，用 Chrome 装的版本";
-  const perm=await Notification.requestPermission(); if(perm!=="granted") throw "没有允许通知";
-  const r=await fetch(fnUrl()+"?action=key"); const j=await r.json().catch(()=>({ok:false,error:r.status})); if(!j.ok) throw "fn:"+(j.error||r.status);
-  const reg=await navigator.serviceWorker.ready; let sub=await reg.pushManager.getSubscription();
+const stepT=(p,ms,name)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej("STUCK:"+name),ms))]);
+async function pushOn(step){ step=step||(()=>{}); if(!("serviceWorker" in navigator)||!("PushManager" in window)) throw "这个浏览器不支持推送，用 Chrome 装的版本";
+  step("1/6 问手机要不要允许通知…"); const perm=await stepT(Notification.requestPermission(),60000,"perm"); if(perm!=="granted") throw "没有允许通知";
+  step("2/6 跟 Supabase 拿推送钥匙…"); const r=await stepT(fetch(fnUrl()+"?action=key"),20000,"key"); const j=await r.json().catch(()=>({ok:false,error:r.status})); if(!j.ok) throw "fn:"+(j.error||r.status);
+  step("3/6 准备背景程序…"); let reg=await navigator.serviceWorker.getRegistration(); if(!reg) reg=await stepT(navigator.serviceWorker.register("sw.js"),15000,"sw"); reg=await stepT(navigator.serviceWorker.ready,15000,"sw");
+  let sub=await reg.pushManager.getSubscription();
   if(sub){ try{ const cur=new Uint8Array(sub.options.applicationServerKey||[]), want=b64u(j.key); if(cur.length&&cur.join()!==want.join()){ await sub.unsubscribe(); sub=null; } }catch(e){} }
-  if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(j.key)});
-  const k=sub.toJSON(); const {error}=await SB.from("moneybook_push").upsert({endpoint:k.endpoint,user_id:uid,p256dh:k.keys.p256dh,auth:k.keys.auth}); if(error) throw error.message;
-  meta.notif={...NDEF,...(meta.notif||{}),off:false,tz:-new Date().getTimezoneOffset()/60}; saveMeta(); await pushTest(); }
+  step("4/6 跟手机订阅通知…"); if(!sub) sub=await stepT(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(j.key)}),25000,"sub");
+  step("5/6 存进 Supabase…"); const k=sub.toJSON(); const res=await stepT(SB.from("moneybook_push").upsert({endpoint:k.endpoint,user_id:uid,p256dh:k.keys.p256dh,auth:k.keys.auth}),20000,"save"); if(res.error) throw res.error.message;
+  meta.notif={...NDEF,...(meta.notif||{}),off:false,tz:-new Date().getTimezoneOffset()/60}; saveMeta();
+  step("6/6 发测试通知…"); await stepT(pushTest(),20000,"test"); }
 async function pushOff(){ try{ const reg=await navigator.serviceWorker.getRegistration(), sub=reg&&await reg.pushManager.getSubscription(); if(sub){ await SB.from("moneybook_push").delete().eq("endpoint",sub.endpoint); await sub.unsubscribe(); } }catch(e){} meta.notif={...NDEF,...(meta.notif||{}),off:true}; saveMeta(); }
 function renderPush(){ const box=$("#pushBox"); if(!box) return; const N={...NDEF,...(meta.notif||{})};
   try{ const t=$("#ts-push"); if(t) t.textContent=pushState==="on"?"已开启":"还没开"; }catch(e){}
@@ -2867,7 +2877,7 @@ document.addEventListener("click",async e=>{
   const msg=t=>{ const m=$("#pushMsg"); if(m) m.textContent=t; };
   if(e.target.closest("#cpSql")){ const t=PUSH_SQL.replace("__FNURL__",fnUrl()); try{ await navigator.clipboard.writeText(t); toast("已复制 SQL"); }catch(er){ prompt("复制下面全部：",t); } return; }
   if(e.target.closest("#cpFn")){ try{ await navigator.clipboard.writeText(PUSH_FN); toast("已复制程序"); }catch(er){ prompt("复制下面全部：",PUSH_FN); } return; }
-  if(e.target.closest("#pushOn")){ msg("设定中…"); try{ await pushOn(); await pushCheck(); renderPush(); toast("通知开好了，看看有没有收到 🎉"); }catch(er){ await pushCheck(); renderPush(); msg(pushErr(er)); } return; }
+  if(e.target.closest("#pushOn")){ msg("设定中…"); try{ await pushOn(msg); await pushCheck(); renderPush(); toast("通知开好了，看看有没有收到 🎉"); }catch(er){ await pushCheck(); renderPush(); msg(pushErr(er)+"（"+String(er&&er.message||er).slice(0,90)+"）"); } return; }
   if(e.target.closest("#pushTest")){ msg("发送中…"); try{ const n=await pushTest(); msg(n?"发出去了，几秒内会收到":"这台手机的订阅不见了，按「关掉」再重新开启"); }catch(er){ msg(pushErr(er)); } return; }
   if(e.target.closest("#pushOff")){ if(!await askConfirm("关掉这台手机的通知？")) return; await pushOff(); await pushCheck(); renderPush(); toast("已关掉"); return; }
 });
